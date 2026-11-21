@@ -18,6 +18,10 @@ See `DESIGN.md` for every design decision and `CHANGELOG.md` for what changed in
 
 ## Setup and run (Windows; macOS/Linux shown in comments)
 
+**Quick start (Windows):** double-click `run.bat`. On the first run it creates `.venv` and installs the requirements. Then it starts the server and opens http://127.0.0.1:5000 in your browser. Close the window to stop the server. It needs Python 3.11+ on PATH.
+
+Manual setup:
+
 ```bash
 python -m venv .venv
 .venv\Scripts\activate            # macOS/Linux: source .venv/bin/activate

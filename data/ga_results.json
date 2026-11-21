@@ -1,0 +1,287 @@
+{
+ "_note": "Produced by run_ga.py on SYNTHETIC reference profiles. The labels come from an expert function (our own assumptions), so these numbers do not measure real-world career success.",
+ "run_at": "2026-11-21T09:51:21+00:00",
+ "skills": [
+  "programming",
+  "mathematics",
+  "problem_solving",
+  "creativity",
+  "communication",
+  "technical_interest"
+ ],
+ "config": {
+  "population": 30,
+  "generations": 40,
+  "crossover_prob": 0.8,
+  "blend_alpha": 0.5,
+  "mutation_prob": 0.2,
+  "mutation_sigma": 0.05,
+  "tournament_size": 3,
+  "elitism": 1,
+  "seed": 42,
+  "seed_equal_weights": true
+ },
+ "fitness_metric": "mean NDCG@5 vs reference top-5 (grades 5..1), training split",
+ "data": {
+  "profiles": 60,
+  "train": 40,
+  "holdout": 20,
+  "profile_seed": 7
+ },
+ "baseline_weights": [
+  0.16666666666666666,
+  0.16666666666666666,
+  0.16666666666666666,
+  0.16666666666666666,
+  0.16666666666666666,
+  0.16666666666666666
+ ],
+ "initial_best_weights": [
+  0.2846250428005495,
+  0.15548038533768074,
+  0.25738804562117074,
+  0.10110408948402322,
+  0.14852024983236933,
+  0.05288218692420652
+ ],
+ "initial_best_fitness": 0.8938068979417965,
+ "optimized_weights": [
+  0.07966221554444992,
+  0.09829090952334686,
+  0.4750302738077904,
+  0.21230598854097749,
+  0.08526520816782975,
+  0.04944540441560555
+ ],
+ "optimized_fitness": 0.919001879290186,
+ "history": [
+  {
+   "generation": 0,
+   "best": 0.8938068979417965,
+   "average": 0.8494159356829971
+  },
+  {
+   "generation": 1,
+   "best": 0.8938068979417965,
+   "average": 0.8493814269119254
+  },
+  {
+   "generation": 2,
+   "best": 0.9029482614169589,
+   "average": 0.8749599625200084
+  },
+  {
+   "generation": 3,
+   "best": 0.9040588916831869,
+   "average": 0.8583534466126461
+  },
+  {
+   "generation": 4,
+   "best": 0.9040588916831869,
+   "average": 0.8743208417722305
+  },
+  {
+   "generation": 5,
+   "best": 0.9040588916831869,
+   "average": 0.8867367619289881
+  },
+  {
+   "generation": 6,
+   "best": 0.911146648690826,
+   "average": 0.8905471056842456
+  },
+  {
+   "generation": 7,
+   "best": 0.911146648690826,
+   "average": 0.8736861130113496
+  },
+  {
+   "generation": 8,
+   "best": 0.9139695391174747,
+   "average": 0.9019671091473316
+  },
+  {
+   "generation": 9,
+   "best": 0.9145823601762018,
+   "average": 0.8973634181640996
+  },
+  {
+   "generation": 10,
+   "best": 0.9154765928232651,
+   "average": 0.8957322037731554
+  },
+  {
+   "generation": 11,
+   "best": 0.9161410445623843,
+   "average": 0.9045996887221875
+  },
+  {
+   "generation": 12,
+   "best": 0.9182579017498596,
+   "average": 0.901413555855825
+  },
+  {
+   "generation": 13,
+   "best": 0.9182579017498596,
+   "average": 0.907441490569346
+  },
+  {
+   "generation": 14,
+   "best": 0.9182579017498596,
+   "average": 0.9042677211442229
+  },
+  {
+   "generation": 15,
+   "best": 0.9182579017498596,
+   "average": 0.8974740646695992
+  },
+  {
+   "generation": 16,
+   "best": 0.9182579017498596,
+   "average": 0.8913952816709322
+  },
+  {
+   "generation": 17,
+   "best": 0.9183645608013634,
+   "average": 0.9074941842246336
+  },
+  {
+   "generation": 18,
+   "best": 0.9187640637570826,
+   "average": 0.9073506486804934
+  },
+  {
+   "generation": 19,
+   "best": 0.919001879290186,
+   "average": 0.8887455455641435
+  },
+  {
+   "generation": 20,
+   "best": 0.919001879290186,
+   "average": 0.8947847767203676
+  },
+  {
+   "generation": 21,
+   "best": 0.919001879290186,
+   "average": 0.9057644834433938
+  },
+  {
+   "generation": 22,
+   "best": 0.919001879290186,
+   "average": 0.8955452459722973
+  },
+  {
+   "generation": 23,
+   "best": 0.919001879290186,
+   "average": 0.8995887221931109
+  },
+  {
+   "generation": 24,
+   "best": 0.919001879290186,
+   "average": 0.9040922139572901
+  },
+  {
+   "generation": 25,
+   "best": 0.919001879290186,
+   "average": 0.8860382365705096
+  },
+  {
+   "generation": 26,
+   "best": 0.919001879290186,
+   "average": 0.906008068292784
+  },
+  {
+   "generation": 27,
+   "best": 0.919001879290186,
+   "average": 0.896280376548924
+  },
+  {
+   "generation": 28,
+   "best": 0.919001879290186,
+   "average": 0.8944994910102226
+  },
+  {
+   "generation": 29,
+   "best": 0.919001879290186,
+   "average": 0.9094769746514374
+  },
+  {
+   "generation": 30,
+   "best": 0.919001879290186,
+   "average": 0.9013480511984914
+  },
+  {
+   "generation": 31,
+   "best": 0.919001879290186,
+   "average": 0.903635929436988
+  },
+  {
+   "generation": 32,
+   "best": 0.919001879290186,
+   "average": 0.909219655620753
+  },
+  {
+   "generation": 33,
+   "best": 0.919001879290186,
+   "average": 0.8844968911518662
+  },
+  {
+   "generation": 34,
+   "best": 0.919001879290186,
+   "average": 0.8979310422110698
+  },
+  {
+   "generation": 35,
+   "best": 0.919001879290186,
+   "average": 0.9113632181102412
+  },
+  {
+   "generation": 36,
+   "best": 0.919001879290186,
+   "average": 0.9079621331463467
+  },
+  {
+   "generation": 37,
+   "best": 0.919001879290186,
+   "average": 0.8987068706756561
+  },
+  {
+   "generation": 38,
+   "best": 0.919001879290186,
+   "average": 0.9045757711576755
+  },
+  {
+   "generation": 39,
+   "best": 0.919001879290186,
+   "average": 0.912866801183997
+  },
+  {
+   "generation": 40,
+   "best": 0.919001879290186,
+   "average": 0.9162872309602227
+  }
+ ],
+ "evaluation": {
+  "train": {
+   "baseline": {
+    "ndcg@5": 0.8857532444714689,
+    "precision@5": 0.825
+   },
+   "optimized": {
+    "ndcg@5": 0.919001879290186,
+    "precision@5": 0.865
+   }
+  },
+  "holdout": {
+   "baseline": {
+    "ndcg@5": 0.839578409732227,
+    "precision@5": 0.78
+   },
+   "optimized": {
+    "ndcg@5": 0.8549829619125159,
+    "precision@5": 0.7900000000000001
+   }
+  }
+ },
+ "runtime_seconds": 19.35
+}

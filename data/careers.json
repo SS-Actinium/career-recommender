@@ -1,0 +1,214 @@
+{
+  "_note": "Target values (0-100) are model assumptions written by the project team for a teaching prototype. They are NOT official industry standards.",
+  "skills": ["programming", "mathematics", "problem_solving", "creativity", "communication", "technical_interest"],
+  "interests": {
+    "software": "Software and application development",
+    "data": "Data, statistics and analytics",
+    "ai": "Artificial Intelligence and Machine Learning",
+    "security": "Cybersecurity and networks",
+    "design": "UI/UX and digital design",
+    "business": "Business, management and analysis",
+    "cloud": "Cloud and DevOps",
+    "marketing": "Digital marketing and communication"
+  },
+  "careers": [
+    {
+      "id": "software_developer", "name": "Software Developer",
+      "description": "Designs, writes, tests and maintains software applications and services.",
+      "targets": {"programming": 85, "mathematics": 60, "problem_solving": 85, "creativity": 50, "communication": 55, "technical_interest": 85},
+      "rule_skills": {"primary": ["programming", "problem_solving"], "secondary": "technical_interest"},
+      "interests": ["software"],
+      "responsibilities": ["Translate requirements into working code", "Write tests and review code", "Debug and maintain existing systems"],
+      "key_skills": ["A general-purpose language (Python, Java or C#)", "Data structures and algorithms", "Git and code review", "Testing"],
+      "learning": ["Data structures and algorithms practice", "One backend framework in depth", "Unit testing and clean code", "Build and publish two small projects"],
+      "related": ["web_developer", "mobile_developer", "qa_engineer"]
+    },
+    {
+      "id": "web_developer", "name": "Web Developer",
+      "description": "Builds websites and web applications, front end, back end or both.",
+      "targets": {"programming": 75, "mathematics": 40, "problem_solving": 70, "creativity": 70, "communication": 55, "technical_interest": 80},
+      "rule_skills": {"primary": ["programming", "technical_interest"], "secondary": "creativity"},
+      "interests": ["software", "design"],
+      "responsibilities": ["Build responsive pages and components", "Connect front ends to APIs", "Optimise performance and accessibility"],
+      "key_skills": ["HTML, CSS, JavaScript", "A front-end framework", "HTTP and REST APIs", "Accessibility basics"],
+      "learning": ["Modern JavaScript", "Responsive CSS layout", "One framework such as React or Vue", "Basic backend with Flask or Node"],
+      "related": ["software_developer", "uiux_designer", "mobile_developer"]
+    },
+    {
+      "id": "mobile_developer", "name": "Mobile Application Developer",
+      "description": "Creates applications for Android and iOS devices.",
+      "targets": {"programming": 80, "mathematics": 45, "problem_solving": 75, "creativity": 65, "communication": 50, "technical_interest": 80},
+      "rule_skills": {"primary": ["programming", "problem_solving"], "secondary": "creativity"},
+      "interests": ["software", "design"],
+      "responsibilities": ["Build mobile screens and app logic", "Integrate device features and APIs", "Publish and maintain apps"],
+      "key_skills": ["Kotlin or Swift, or Flutter", "Mobile UI patterns", "REST APIs", "App lifecycle"],
+      "learning": ["Kotlin or Flutter fundamentals", "Mobile UI design guidelines", "Local storage and networking", "Publish a sample app"],
+      "related": ["software_developer", "web_developer", "uiux_designer"]
+    },
+    {
+      "id": "data_analyst", "name": "Data Analyst",
+      "description": "Cleans, analyses and visualises data to answer business questions.",
+      "targets": {"programming": 50, "mathematics": 80, "problem_solving": 75, "creativity": 40, "communication": 70, "technical_interest": 65},
+      "rule_skills": {"primary": ["mathematics", "problem_solving"], "secondary": "communication"},
+      "interests": ["data", "business"],
+      "responsibilities": ["Clean and prepare datasets", "Build reports and dashboards", "Present findings to stakeholders"],
+      "key_skills": ["SQL", "Spreadsheets", "Descriptive statistics", "A visualisation tool"],
+      "learning": ["SQL queries and joins", "Statistics fundamentals", "Pandas for data cleaning", "Dashboard design"],
+      "related": ["data_scientist", "business_analyst", "database_administrator"]
+    },
+    {
+      "id": "data_scientist", "name": "Data Scientist",
+      "description": "Uses statistics and machine learning to build predictive models from data.",
+      "targets": {"programming": 70, "mathematics": 90, "problem_solving": 85, "creativity": 50, "communication": 60, "technical_interest": 75},
+      "rule_skills": {"primary": ["mathematics", "programming"], "secondary": "problem_solving"},
+      "interests": ["data", "ai"],
+      "responsibilities": ["Frame questions as modelling problems", "Train and evaluate models", "Communicate model results and limits"],
+      "key_skills": ["Python and Pandas", "Probability and statistics", "Machine learning basics", "Experiment design"],
+      "learning": ["Probability and statistics", "Linear algebra basics", "scikit-learn", "An end-to-end data project"],
+      "related": ["data_analyst", "ai_ml_engineer", "business_analyst"]
+    },
+    {
+      "id": "ai_ml_engineer", "name": "AI/ML Engineer",
+      "description": "Builds, trains and deploys machine learning and AI systems.",
+      "targets": {"programming": 85, "mathematics": 90, "problem_solving": 85, "creativity": 55, "communication": 50, "technical_interest": 90},
+      "rule_skills": {"primary": ["programming", "mathematics"], "secondary": "technical_interest"},
+      "interests": ["ai", "data", "software"],
+      "responsibilities": ["Implement and train models", "Build data and model pipelines", "Deploy and monitor models"],
+      "key_skills": ["Python", "Linear algebra and calculus", "Deep learning frameworks", "MLOps basics"],
+      "learning": ["Linear algebra and calculus refresh", "Neural networks with PyTorch", "Model evaluation", "Deploying a model as an API"],
+      "related": ["data_scientist", "software_developer", "cloud_engineer"]
+    },
+    {
+      "id": "cybersecurity_analyst", "name": "Cybersecurity Analyst",
+      "description": "Protects systems and networks by monitoring, detecting and responding to threats.",
+      "targets": {"programming": 70, "mathematics": 55, "problem_solving": 85, "creativity": 45, "communication": 55, "technical_interest": 90},
+      "rule_skills": {"primary": ["problem_solving", "technical_interest"], "secondary": "programming"},
+      "interests": ["security"],
+      "responsibilities": ["Monitor alerts and logs", "Investigate incidents", "Assess and reduce vulnerabilities"],
+      "key_skills": ["Networking fundamentals", "Operating systems and Linux", "Security tools", "Scripting"],
+      "learning": ["Networking (TCP/IP)", "Linux command line", "OWASP Top 10", "Legal practice labs and CTFs"],
+      "related": ["network_engineer", "cloud_engineer", "it_support"]
+    },
+    {
+      "id": "cloud_engineer", "name": "Cloud Engineer",
+      "description": "Designs and operates infrastructure on cloud platforms.",
+      "targets": {"programming": 70, "mathematics": 45, "problem_solving": 75, "creativity": 40, "communication": 55, "technical_interest": 90},
+      "rule_skills": {"primary": ["technical_interest", "programming"], "secondary": "problem_solving"},
+      "interests": ["cloud"],
+      "responsibilities": ["Provision and manage cloud resources", "Automate infrastructure", "Control cost and reliability"],
+      "key_skills": ["A cloud platform", "Linux", "Infrastructure as code", "Networking basics"],
+      "learning": ["One cloud platform's fundamentals", "Linux administration", "Terraform basics", "Containers with Docker"],
+      "related": ["devops_engineer", "network_engineer", "ai_ml_engineer"]
+    },
+    {
+      "id": "devops_engineer", "name": "DevOps Engineer",
+      "description": "Automates building, testing and deploying software, and keeps systems running.",
+      "targets": {"programming": 75, "mathematics": 40, "problem_solving": 80, "creativity": 40, "communication": 60, "technical_interest": 85},
+      "rule_skills": {"primary": ["programming", "technical_interest"], "secondary": "communication"},
+      "interests": ["cloud", "software"],
+      "responsibilities": ["Build CI/CD pipelines", "Manage containers and deployments", "Work with developers on reliability"],
+      "key_skills": ["Scripting", "CI/CD tools", "Docker and Kubernetes", "Monitoring"],
+      "learning": ["Bash and Python scripting", "Git-based CI pipelines", "Docker and Kubernetes", "Monitoring and logging"],
+      "related": ["cloud_engineer", "software_developer", "qa_engineer"]
+    },
+    {
+      "id": "database_administrator", "name": "Database Administrator",
+      "description": "Installs, tunes, secures and backs up databases.",
+      "targets": {"programming": 60, "mathematics": 60, "problem_solving": 75, "creativity": 30, "communication": 50, "technical_interest": 75},
+      "rule_skills": {"primary": ["problem_solving", "technical_interest"], "secondary": "mathematics"},
+      "interests": ["data"],
+      "responsibilities": ["Design schemas and indexes", "Back up and restore data", "Tune query performance"],
+      "key_skills": ["SQL", "Relational database design", "Backup and recovery", "Performance tuning"],
+      "learning": ["Advanced SQL", "Normalisation and indexing", "PostgreSQL or MySQL administration", "Backup strategies"],
+      "related": ["data_analyst", "cloud_engineer", "software_developer"]
+    },
+    {
+      "id": "network_engineer", "name": "Network Engineer",
+      "description": "Designs, builds and maintains computer networks.",
+      "targets": {"programming": 45, "mathematics": 50, "problem_solving": 75, "creativity": 35, "communication": 55, "technical_interest": 85},
+      "rule_skills": {"primary": ["technical_interest", "problem_solving"], "secondary": "communication"},
+      "interests": ["security", "cloud"],
+      "responsibilities": ["Configure routers, switches and firewalls", "Troubleshoot connectivity", "Plan network capacity"],
+      "key_skills": ["TCP/IP and subnetting", "Routing and switching", "Firewalls", "Network monitoring"],
+      "learning": ["Subnetting practice", "Routing and switching labs", "Network security basics", "A networking certification syllabus"],
+      "related": ["cybersecurity_analyst", "cloud_engineer", "it_support"]
+    },
+    {
+      "id": "uiux_designer", "name": "UI/UX Designer",
+      "description": "Researches users and designs clear, usable digital interfaces.",
+      "targets": {"programming": 35, "mathematics": 30, "problem_solving": 70, "creativity": 90, "communication": 75, "technical_interest": 55},
+      "rule_skills": {"primary": ["creativity", "communication"], "secondary": "problem_solving"},
+      "interests": ["design"],
+      "responsibilities": ["Run user research", "Create wireframes and prototypes", "Test designs with users"],
+      "key_skills": ["Figma or a similar tool", "User research", "Visual design basics", "Prototyping"],
+      "learning": ["Design principles and typography", "Figma prototyping", "Usability testing", "A case-study portfolio"],
+      "related": ["product_designer", "web_developer", "digital_marketing"]
+    },
+    {
+      "id": "business_analyst", "name": "Business Analyst",
+      "description": "Connects business needs with technical solutions by analysing processes and requirements.",
+      "targets": {"programming": 35, "mathematics": 65, "problem_solving": 75, "creativity": 50, "communication": 85, "technical_interest": 55},
+      "rule_skills": {"primary": ["communication", "mathematics"], "secondary": "problem_solving"},
+      "interests": ["business", "data"],
+      "responsibilities": ["Gather and document requirements", "Analyse processes and data", "Present recommendations"],
+      "key_skills": ["Requirements writing", "Process modelling", "Spreadsheets and SQL basics", "Stakeholder communication"],
+      "learning": ["Requirements and user stories", "Process modelling (BPMN)", "Excel and SQL basics", "Presentation skills"],
+      "related": ["project_manager", "data_analyst", "product_designer"]
+    },
+    {
+      "id": "project_manager", "name": "Project Manager",
+      "description": "Plans and coordinates projects so they are delivered on time and within scope.",
+      "targets": {"programming": 30, "mathematics": 45, "problem_solving": 75, "creativity": 50, "communication": 90, "technical_interest": 50},
+      "rule_skills": {"primary": ["communication", "problem_solving"], "secondary": "creativity"},
+      "interests": ["business"],
+      "responsibilities": ["Plan scope, schedule and resources", "Coordinate the team", "Track risks and report progress"],
+      "key_skills": ["Planning and scheduling", "Agile and Scrum", "Risk management", "Team communication"],
+      "learning": ["Agile and Scrum basics", "Project planning tools", "Risk and stakeholder management", "Run a small team project"],
+      "related": ["business_analyst", "qa_engineer", "digital_marketing"]
+    },
+    {
+      "id": "qa_engineer", "name": "QA / Software Test Engineer",
+      "description": "Checks that software works correctly through manual and automated testing.",
+      "targets": {"programming": 65, "mathematics": 45, "problem_solving": 80, "creativity": 40, "communication": 60, "technical_interest": 70},
+      "rule_skills": {"primary": ["problem_solving", "programming"], "secondary": "communication"},
+      "interests": ["software"],
+      "responsibilities": ["Design test cases", "Automate regression tests", "Report and track defects"],
+      "key_skills": ["Test design techniques", "Test automation", "Bug reporting", "Basic programming"],
+      "learning": ["Testing fundamentals", "Selenium or Playwright", "API testing", "Writing clear bug reports"],
+      "related": ["software_developer", "devops_engineer", "project_manager"]
+    },
+    {
+      "id": "digital_marketing", "name": "Digital Marketing Specialist",
+      "description": "Plans and runs online campaigns using content, social media, search and analytics.",
+      "targets": {"programming": 20, "mathematics": 45, "problem_solving": 55, "creativity": 80, "communication": 85, "technical_interest": 45},
+      "rule_skills": {"primary": ["communication", "creativity"], "secondary": "mathematics"},
+      "interests": ["marketing", "business"],
+      "responsibilities": ["Create campaign content", "Manage social and search channels", "Measure and report campaign results"],
+      "key_skills": ["Content writing", "SEO and social media", "Web analytics", "Campaign planning"],
+      "learning": ["SEO basics", "Social media strategy", "Web analytics", "Run a small campaign"],
+      "related": ["uiux_designer", "business_analyst", "project_manager"]
+    },
+    {
+      "id": "product_designer", "name": "Product Designer",
+      "description": "Shapes the whole product experience, combining user needs, business goals and design.",
+      "targets": {"programming": 40, "mathematics": 40, "problem_solving": 75, "creativity": 90, "communication": 70, "technical_interest": 60},
+      "rule_skills": {"primary": ["creativity", "problem_solving"], "secondary": "communication"},
+      "interests": ["design", "business"],
+      "responsibilities": ["Define product problems with the team", "Design flows and interfaces", "Validate ideas with users"],
+      "key_skills": ["Interaction design", "Prototyping", "User research", "Product thinking"],
+      "learning": ["Design thinking", "Interaction design patterns", "Product metrics basics", "End-to-end design case studies"],
+      "related": ["uiux_designer", "business_analyst", "web_developer"]
+    },
+    {
+      "id": "it_support", "name": "IT Support Specialist",
+      "description": "Helps users solve hardware, software and network problems.",
+      "targets": {"programming": 40, "mathematics": 30, "problem_solving": 65, "creativity": 35, "communication": 80, "technical_interest": 70},
+      "rule_skills": {"primary": ["communication", "technical_interest"], "secondary": "problem_solving"},
+      "interests": ["cloud", "security"],
+      "responsibilities": ["Respond to support tickets", "Set up devices and accounts", "Document fixes"],
+      "key_skills": ["Operating systems", "Troubleshooting", "Networking basics", "Customer communication"],
+      "learning": ["Windows and Linux basics", "Networking fundamentals", "Ticketing and documentation", "An entry-level IT certification syllabus"],
+      "related": ["network_engineer", "cybersecurity_analyst", "cloud_engineer"]
+    }
+  ]
+}

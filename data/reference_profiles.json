@@ -1,0 +1,1678 @@
+{
+ "_note": "SYNTHETIC profiles for GA training and evaluation. Not real student data.",
+ "seed": 7,
+ "n_train": 40,
+ "profiles": [
+  {
+   "id": "syn-001",
+   "synthetic": true,
+   "archetypes": [
+    "it_support"
+   ],
+   "skills": {
+    "programming": 37,
+    "mathematics": 19,
+    "problem_solving": 60,
+    "creativity": 23,
+    "communication": 81,
+    "technical_interest": 86
+   },
+   "interests": [
+    "cloud",
+    "security"
+   ],
+   "reference_top5": [
+    "it_support",
+    "network_engineer",
+    "cloud_engineer",
+    "devops_engineer",
+    "cybersecurity_analyst"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-002",
+   "synthetic": true,
+   "archetypes": [
+    "database_administrator"
+   ],
+   "skills": {
+    "programming": 37,
+    "mathematics": 45,
+    "problem_solving": 53,
+    "creativity": 27,
+    "communication": 35,
+    "technical_interest": 78
+   },
+   "interests": [
+    "data"
+   ],
+   "reference_top5": [
+    "database_administrator",
+    "data_analyst",
+    "business_analyst",
+    "data_scientist",
+    "ai_ml_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-003",
+   "synthetic": true,
+   "archetypes": [
+    "it_support",
+    "web_developer"
+   ],
+   "skills": {
+    "programming": 48,
+    "mathematics": 48,
+    "problem_solving": 58,
+    "creativity": 52,
+    "communication": 78,
+    "technical_interest": 68
+   },
+   "interests": [
+    "software",
+    "design",
+    "cloud",
+    "business"
+   ],
+   "reference_top5": [
+    "web_developer",
+    "mobile_developer",
+    "devops_engineer",
+    "qa_engineer",
+    "it_support"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-004",
+   "synthetic": true,
+   "archetypes": [
+    "database_administrator"
+   ],
+   "skills": {
+    "programming": 84,
+    "mathematics": 69,
+    "problem_solving": 61,
+    "creativity": 31,
+    "communication": 57,
+    "technical_interest": 73
+   },
+   "interests": [
+    "data"
+   ],
+   "reference_top5": [
+    "database_administrator",
+    "data_analyst",
+    "data_scientist",
+    "business_analyst",
+    "ai_ml_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-005",
+   "synthetic": true,
+   "archetypes": [
+    "network_engineer"
+   ],
+   "skills": {
+    "programming": 43,
+    "mathematics": 61,
+    "problem_solving": 89,
+    "creativity": 19,
+    "communication": 45,
+    "technical_interest": 93
+   },
+   "interests": [
+    "cloud",
+    "software",
+    "marketing"
+   ],
+   "reference_top5": [
+    "devops_engineer",
+    "network_engineer",
+    "cloud_engineer",
+    "it_support",
+    "qa_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-006",
+   "synthetic": true,
+   "archetypes": [
+    "network_engineer"
+   ],
+   "skills": {
+    "programming": 41,
+    "mathematics": 54,
+    "problem_solving": 74,
+    "creativity": 33,
+    "communication": 42,
+    "technical_interest": 85
+   },
+   "interests": [
+    "cloud",
+    "security",
+    "software"
+   ],
+   "reference_top5": [
+    "network_engineer",
+    "it_support",
+    "devops_engineer",
+    "cloud_engineer",
+    "cybersecurity_analyst"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-007",
+   "synthetic": true,
+   "archetypes": [
+    "software_developer"
+   ],
+   "skills": {
+    "programming": 89,
+    "mathematics": 40,
+    "problem_solving": 61,
+    "creativity": 46,
+    "communication": 44,
+    "technical_interest": 87
+   },
+   "interests": [
+    "software"
+   ],
+   "reference_top5": [
+    "devops_engineer",
+    "mobile_developer",
+    "web_developer",
+    "qa_engineer",
+    "software_developer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-008",
+   "synthetic": true,
+   "archetypes": [
+    "software_developer",
+    "cloud_engineer"
+   ],
+   "skills": {
+    "programming": 77,
+    "mathematics": 53,
+    "problem_solving": 67,
+    "creativity": 48,
+    "communication": 45,
+    "technical_interest": 99
+   },
+   "interests": [
+    "software",
+    "cloud"
+   ],
+   "reference_top5": [
+    "devops_engineer",
+    "mobile_developer",
+    "qa_engineer",
+    "web_developer",
+    "software_developer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-009",
+   "synthetic": true,
+   "archetypes": [
+    "web_developer"
+   ],
+   "skills": {
+    "programming": 84,
+    "mathematics": 30,
+    "problem_solving": 79,
+    "creativity": 72,
+    "communication": 37,
+    "technical_interest": 95
+   },
+   "interests": [
+    "design"
+   ],
+   "reference_top5": [
+    "mobile_developer",
+    "web_developer",
+    "product_designer",
+    "uiux_designer",
+    "cloud_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-010",
+   "synthetic": true,
+   "archetypes": [
+    "data_analyst"
+   ],
+   "skills": {
+    "programming": 42,
+    "mathematics": 65,
+    "problem_solving": 90,
+    "creativity": 38,
+    "communication": 82,
+    "technical_interest": 65
+   },
+   "interests": [
+    "business",
+    "data"
+   ],
+   "reference_top5": [
+    "business_analyst",
+    "data_analyst",
+    "project_manager",
+    "digital_marketing",
+    "product_designer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-011",
+   "synthetic": true,
+   "archetypes": [
+    "software_developer"
+   ],
+   "skills": {
+    "programming": 77,
+    "mathematics": 47,
+    "problem_solving": 89,
+    "creativity": 67,
+    "communication": 38,
+    "technical_interest": 82
+   },
+   "interests": [
+    "software",
+    "cloud"
+   ],
+   "reference_top5": [
+    "devops_engineer",
+    "mobile_developer",
+    "web_developer",
+    "qa_engineer",
+    "software_developer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-012",
+   "synthetic": true,
+   "archetypes": [
+    "software_developer"
+   ],
+   "skills": {
+    "programming": 70,
+    "mathematics": 76,
+    "problem_solving": 79,
+    "creativity": 54,
+    "communication": 55,
+    "technical_interest": 80
+   },
+   "interests": [
+    "ai",
+    "data",
+    "security"
+   ],
+   "reference_top5": [
+    "data_scientist",
+    "ai_ml_engineer",
+    "database_administrator",
+    "data_analyst",
+    "business_analyst"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-013",
+   "synthetic": true,
+   "archetypes": [
+    "ai_ml_engineer",
+    "network_engineer"
+   ],
+   "skills": {
+    "programming": 77,
+    "mathematics": 68,
+    "problem_solving": 87,
+    "creativity": 54,
+    "communication": 62,
+    "technical_interest": 99
+   },
+   "interests": [
+    "ai",
+    "data",
+    "software",
+    "security",
+    "cloud"
+   ],
+   "reference_top5": [
+    "ai_ml_engineer",
+    "data_scientist",
+    "database_administrator",
+    "devops_engineer",
+    "network_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-014",
+   "synthetic": true,
+   "archetypes": [
+    "ai_ml_engineer",
+    "ai_ml_engineer"
+   ],
+   "skills": {
+    "programming": 95,
+    "mathematics": 70,
+    "problem_solving": 60,
+    "creativity": 58,
+    "communication": 51,
+    "technical_interest": 87
+   },
+   "interests": [
+    "data",
+    "software",
+    "business"
+   ],
+   "reference_top5": [
+    "ai_ml_engineer",
+    "data_analyst",
+    "database_administrator",
+    "business_analyst",
+    "data_scientist"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-015",
+   "synthetic": true,
+   "archetypes": [
+    "product_designer"
+   ],
+   "skills": {
+    "programming": 32,
+    "mathematics": 28,
+    "problem_solving": 64,
+    "creativity": 92,
+    "communication": 61,
+    "technical_interest": 64
+   },
+   "interests": [
+    "business",
+    "design"
+   ],
+   "reference_top5": [
+    "product_designer",
+    "digital_marketing",
+    "project_manager",
+    "business_analyst",
+    "uiux_designer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-016",
+   "synthetic": true,
+   "archetypes": [
+    "network_engineer"
+   ],
+   "skills": {
+    "programming": 46,
+    "mathematics": 47,
+    "problem_solving": 89,
+    "creativity": 35,
+    "communication": 29,
+    "technical_interest": 77
+   },
+   "interests": [
+    "cloud",
+    "security",
+    "ai"
+   ],
+   "reference_top5": [
+    "network_engineer",
+    "it_support",
+    "cloud_engineer",
+    "devops_engineer",
+    "cybersecurity_analyst"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-017",
+   "synthetic": true,
+   "archetypes": [
+    "mobile_developer"
+   ],
+   "skills": {
+    "programming": 81,
+    "mathematics": 44,
+    "problem_solving": 75,
+    "creativity": 75,
+    "communication": 57,
+    "technical_interest": 83
+   },
+   "interests": [
+    "design",
+    "software"
+   ],
+   "reference_top5": [
+    "web_developer",
+    "mobile_developer",
+    "product_designer",
+    "uiux_designer",
+    "qa_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-018",
+   "synthetic": true,
+   "archetypes": [
+    "devops_engineer"
+   ],
+   "skills": {
+    "programming": 69,
+    "mathematics": 49,
+    "problem_solving": 85,
+    "creativity": 9,
+    "communication": 63,
+    "technical_interest": 84
+   },
+   "interests": [
+    "cloud",
+    "software",
+    "business"
+   ],
+   "reference_top5": [
+    "devops_engineer",
+    "network_engineer",
+    "cloud_engineer",
+    "it_support",
+    "qa_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-019",
+   "synthetic": true,
+   "archetypes": [
+    "software_developer"
+   ],
+   "skills": {
+    "programming": 63,
+    "mathematics": 79,
+    "problem_solving": 97,
+    "creativity": 61,
+    "communication": 63,
+    "technical_interest": 86
+   },
+   "interests": [
+    "software"
+   ],
+   "reference_top5": [
+    "qa_engineer",
+    "devops_engineer",
+    "web_developer",
+    "mobile_developer",
+    "software_developer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-020",
+   "synthetic": true,
+   "archetypes": [
+    "qa_engineer",
+    "cybersecurity_analyst"
+   ],
+   "skills": {
+    "programming": 74,
+    "mathematics": 51,
+    "problem_solving": 78,
+    "creativity": 29,
+    "communication": 57,
+    "technical_interest": 90
+   },
+   "interests": [
+    "security",
+    "data",
+    "business"
+   ],
+   "reference_top5": [
+    "network_engineer",
+    "cybersecurity_analyst",
+    "it_support",
+    "database_administrator",
+    "data_analyst"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-021",
+   "synthetic": true,
+   "archetypes": [
+    "cybersecurity_analyst",
+    "product_designer"
+   ],
+   "skills": {
+    "programming": 39,
+    "mathematics": 66,
+    "problem_solving": 76,
+    "creativity": 60,
+    "communication": 65,
+    "technical_interest": 75
+   },
+   "interests": [
+    "security",
+    "business",
+    "cloud",
+    "data"
+   ],
+   "reference_top5": [
+    "network_engineer",
+    "it_support",
+    "business_analyst",
+    "data_analyst",
+    "cybersecurity_analyst"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-022",
+   "synthetic": true,
+   "archetypes": [
+    "devops_engineer"
+   ],
+   "skills": {
+    "programming": 88,
+    "mathematics": 58,
+    "problem_solving": 83,
+    "creativity": 47,
+    "communication": 83,
+    "technical_interest": 83
+   },
+   "interests": [
+    "cloud",
+    "software",
+    "data",
+    "security"
+   ],
+   "reference_top5": [
+    "devops_engineer",
+    "it_support",
+    "network_engineer",
+    "cloud_engineer",
+    "qa_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-023",
+   "synthetic": true,
+   "archetypes": [
+    "data_analyst"
+   ],
+   "skills": {
+    "programming": 48,
+    "mathematics": 83,
+    "problem_solving": 79,
+    "creativity": 36,
+    "communication": 70,
+    "technical_interest": 67
+   },
+   "interests": [
+    "data",
+    "business",
+    "design",
+    "security"
+   ],
+   "reference_top5": [
+    "data_analyst",
+    "business_analyst",
+    "database_administrator",
+    "data_scientist",
+    "product_designer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-024",
+   "synthetic": true,
+   "archetypes": [
+    "business_analyst"
+   ],
+   "skills": {
+    "programming": 33,
+    "mathematics": 44,
+    "problem_solving": 71,
+    "creativity": 42,
+    "communication": 93,
+    "technical_interest": 82
+   },
+   "interests": [
+    "data",
+    "business"
+   ],
+   "reference_top5": [
+    "business_analyst",
+    "data_analyst",
+    "database_administrator",
+    "project_manager",
+    "data_scientist"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-025",
+   "synthetic": true,
+   "archetypes": [
+    "ai_ml_engineer"
+   ],
+   "skills": {
+    "programming": 98,
+    "mathematics": 84,
+    "problem_solving": 91,
+    "creativity": 53,
+    "communication": 45,
+    "technical_interest": 86
+   },
+   "interests": [
+    "data",
+    "ai",
+    "business"
+   ],
+   "reference_top5": [
+    "ai_ml_engineer",
+    "data_scientist",
+    "data_analyst",
+    "database_administrator",
+    "business_analyst"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-026",
+   "synthetic": true,
+   "archetypes": [
+    "cloud_engineer"
+   ],
+   "skills": {
+    "programming": 65,
+    "mathematics": 57,
+    "problem_solving": 78,
+    "creativity": 25,
+    "communication": 44,
+    "technical_interest": 100
+   },
+   "interests": [
+    "cloud",
+    "marketing"
+   ],
+   "reference_top5": [
+    "network_engineer",
+    "cloud_engineer",
+    "devops_engineer",
+    "it_support",
+    "database_administrator"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-027",
+   "synthetic": true,
+   "archetypes": [
+    "qa_engineer"
+   ],
+   "skills": {
+    "programming": 63,
+    "mathematics": 64,
+    "problem_solving": 72,
+    "creativity": 42,
+    "communication": 40,
+    "technical_interest": 65
+   },
+   "interests": [
+    "software",
+    "business",
+    "data"
+   ],
+   "reference_top5": [
+    "qa_engineer",
+    "data_analyst",
+    "ai_ml_engineer",
+    "devops_engineer",
+    "mobile_developer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-028",
+   "synthetic": true,
+   "archetypes": [
+    "database_administrator",
+    "qa_engineer"
+   ],
+   "skills": {
+    "programming": 50,
+    "mathematics": 37,
+    "problem_solving": 77,
+    "creativity": 46,
+    "communication": 37,
+    "technical_interest": 73
+   },
+   "interests": [
+    "data",
+    "software"
+   ],
+   "reference_top5": [
+    "database_administrator",
+    "ai_ml_engineer",
+    "data_analyst",
+    "business_analyst",
+    "data_scientist"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-029",
+   "synthetic": true,
+   "archetypes": [
+    "cloud_engineer"
+   ],
+   "skills": {
+    "programming": 68,
+    "mathematics": 52,
+    "problem_solving": 74,
+    "creativity": 27,
+    "communication": 54,
+    "technical_interest": 91
+   },
+   "interests": [
+    "cloud",
+    "marketing"
+   ],
+   "reference_top5": [
+    "network_engineer",
+    "cloud_engineer",
+    "devops_engineer",
+    "it_support",
+    "database_administrator"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-030",
+   "synthetic": true,
+   "archetypes": [
+    "cloud_engineer"
+   ],
+   "skills": {
+    "programming": 83,
+    "mathematics": 27,
+    "problem_solving": 62,
+    "creativity": 31,
+    "communication": 41,
+    "technical_interest": 95
+   },
+   "interests": [
+    "cloud"
+   ],
+   "reference_top5": [
+    "cloud_engineer",
+    "devops_engineer",
+    "network_engineer",
+    "it_support",
+    "database_administrator"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-031",
+   "synthetic": true,
+   "archetypes": [
+    "product_designer"
+   ],
+   "skills": {
+    "programming": 36,
+    "mathematics": 43,
+    "problem_solving": 75,
+    "creativity": 92,
+    "communication": 71,
+    "technical_interest": 83
+   },
+   "interests": [
+    "business",
+    "design"
+   ],
+   "reference_top5": [
+    "product_designer",
+    "digital_marketing",
+    "project_manager",
+    "business_analyst",
+    "data_analyst"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-032",
+   "synthetic": true,
+   "archetypes": [
+    "devops_engineer"
+   ],
+   "skills": {
+    "programming": 71,
+    "mathematics": 57,
+    "problem_solving": 46,
+    "creativity": 46,
+    "communication": 47,
+    "technical_interest": 97
+   },
+   "interests": [
+    "software",
+    "cloud",
+    "business",
+    "data"
+   ],
+   "reference_top5": [
+    "devops_engineer",
+    "qa_engineer",
+    "web_developer",
+    "cloud_engineer",
+    "mobile_developer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-033",
+   "synthetic": true,
+   "archetypes": [
+    "data_scientist"
+   ],
+   "skills": {
+    "programming": 70,
+    "mathematics": 89,
+    "problem_solving": 84,
+    "creativity": 37,
+    "communication": 59,
+    "technical_interest": 75
+   },
+   "interests": [
+    "data",
+    "business"
+   ],
+   "reference_top5": [
+    "data_analyst",
+    "business_analyst",
+    "database_administrator",
+    "data_scientist",
+    "ai_ml_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-034",
+   "synthetic": true,
+   "archetypes": [
+    "cybersecurity_analyst",
+    "business_analyst"
+   ],
+   "skills": {
+    "programming": 51,
+    "mathematics": 63,
+    "problem_solving": 78,
+    "creativity": 39,
+    "communication": 59,
+    "technical_interest": 70
+   },
+   "interests": [
+    "business",
+    "data",
+    "security",
+    "marketing"
+   ],
+   "reference_top5": [
+    "data_analyst",
+    "business_analyst",
+    "database_administrator",
+    "project_manager",
+    "network_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-035",
+   "synthetic": true,
+   "archetypes": [
+    "data_scientist",
+    "uiux_designer"
+   ],
+   "skills": {
+    "programming": 51,
+    "mathematics": 55,
+    "problem_solving": 73,
+    "creativity": 58,
+    "communication": 64,
+    "technical_interest": 58
+   },
+   "interests": [
+    "data",
+    "ai",
+    "design"
+   ],
+   "reference_top5": [
+    "data_scientist",
+    "ai_ml_engineer",
+    "database_administrator",
+    "business_analyst",
+    "data_analyst"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-036",
+   "synthetic": true,
+   "archetypes": [
+    "mobile_developer"
+   ],
+   "skills": {
+    "programming": 83,
+    "mathematics": 50,
+    "problem_solving": 67,
+    "creativity": 62,
+    "communication": 58,
+    "technical_interest": 85
+   },
+   "interests": [
+    "software",
+    "design",
+    "cloud"
+   ],
+   "reference_top5": [
+    "web_developer",
+    "mobile_developer",
+    "devops_engineer",
+    "qa_engineer",
+    "software_developer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-037",
+   "synthetic": true,
+   "archetypes": [
+    "ai_ml_engineer"
+   ],
+   "skills": {
+    "programming": 90,
+    "mathematics": 72,
+    "problem_solving": 69,
+    "creativity": 47,
+    "communication": 65,
+    "technical_interest": 86
+   },
+   "interests": [
+    "software",
+    "data",
+    "design"
+   ],
+   "reference_top5": [
+    "ai_ml_engineer",
+    "mobile_developer",
+    "web_developer",
+    "devops_engineer",
+    "qa_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-038",
+   "synthetic": true,
+   "archetypes": [
+    "project_manager"
+   ],
+   "skills": {
+    "programming": 42,
+    "mathematics": 36,
+    "problem_solving": 74,
+    "creativity": 59,
+    "communication": 97,
+    "technical_interest": 63
+   },
+   "interests": [
+    "cloud"
+   ],
+   "reference_top5": [
+    "it_support",
+    "network_engineer",
+    "devops_engineer",
+    "cloud_engineer",
+    "project_manager"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-039",
+   "synthetic": true,
+   "archetypes": [
+    "digital_marketing"
+   ],
+   "skills": {
+    "programming": 16,
+    "mathematics": 38,
+    "problem_solving": 45,
+    "creativity": 53,
+    "communication": 81,
+    "technical_interest": 56
+   },
+   "interests": [
+    "marketing",
+    "business",
+    "design",
+    "ai",
+    "software"
+   ],
+   "reference_top5": [
+    "digital_marketing",
+    "product_designer",
+    "project_manager",
+    "business_analyst",
+    "uiux_designer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-040",
+   "synthetic": true,
+   "archetypes": [
+    "web_developer"
+   ],
+   "skills": {
+    "programming": 79,
+    "mathematics": 49,
+    "problem_solving": 64,
+    "creativity": 70,
+    "communication": 66,
+    "technical_interest": 100
+   },
+   "interests": [
+    "design",
+    "software"
+   ],
+   "reference_top5": [
+    "web_developer",
+    "mobile_developer",
+    "product_designer",
+    "uiux_designer",
+    "devops_engineer"
+   ],
+   "split": "train"
+  },
+  {
+   "id": "syn-041",
+   "synthetic": true,
+   "archetypes": [
+    "software_developer"
+   ],
+   "skills": {
+    "programming": 98,
+    "mathematics": 42,
+    "problem_solving": 74,
+    "creativity": 54,
+    "communication": 47,
+    "technical_interest": 67
+   },
+   "interests": [
+    "software",
+    "security",
+    "marketing"
+   ],
+   "reference_top5": [
+    "qa_engineer",
+    "mobile_developer",
+    "web_developer",
+    "devops_engineer",
+    "software_developer"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-042",
+   "synthetic": true,
+   "archetypes": [
+    "devops_engineer"
+   ],
+   "skills": {
+    "programming": 67,
+    "mathematics": 48,
+    "problem_solving": 83,
+    "creativity": 29,
+    "communication": 61,
+    "technical_interest": 81
+   },
+   "interests": [
+    "cloud",
+    "security"
+   ],
+   "reference_top5": [
+    "network_engineer",
+    "it_support",
+    "devops_engineer",
+    "cloud_engineer",
+    "cybersecurity_analyst"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-043",
+   "synthetic": true,
+   "archetypes": [
+    "software_developer"
+   ],
+   "skills": {
+    "programming": 100,
+    "mathematics": 59,
+    "problem_solving": 73,
+    "creativity": 51,
+    "communication": 60,
+    "technical_interest": 75
+   },
+   "interests": [
+    "software",
+    "security",
+    "cloud"
+   ],
+   "reference_top5": [
+    "devops_engineer",
+    "qa_engineer",
+    "network_engineer",
+    "mobile_developer",
+    "software_developer"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-044",
+   "synthetic": true,
+   "archetypes": [
+    "data_scientist"
+   ],
+   "skills": {
+    "programming": 66,
+    "mathematics": 78,
+    "problem_solving": 99,
+    "creativity": 50,
+    "communication": 51,
+    "technical_interest": 71
+   },
+   "interests": [
+    "data",
+    "ai",
+    "marketing"
+   ],
+   "reference_top5": [
+    "data_scientist",
+    "ai_ml_engineer",
+    "database_administrator",
+    "data_analyst",
+    "business_analyst"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-045",
+   "synthetic": true,
+   "archetypes": [
+    "qa_engineer"
+   ],
+   "skills": {
+    "programming": 62,
+    "mathematics": 41,
+    "problem_solving": 95,
+    "creativity": 46,
+    "communication": 68,
+    "technical_interest": 64
+   },
+   "interests": [
+    "software",
+    "security"
+   ],
+   "reference_top5": [
+    "qa_engineer",
+    "devops_engineer",
+    "web_developer",
+    "mobile_developer",
+    "software_developer"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-046",
+   "synthetic": true,
+   "archetypes": [
+    "database_administrator",
+    "database_administrator"
+   ],
+   "skills": {
+    "programming": 56,
+    "mathematics": 40,
+    "problem_solving": 79,
+    "creativity": 21,
+    "communication": 46,
+    "technical_interest": 68
+   },
+   "interests": [
+    "data",
+    "security",
+    "marketing"
+   ],
+   "reference_top5": [
+    "database_administrator",
+    "data_analyst",
+    "network_engineer",
+    "it_support",
+    "business_analyst"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-047",
+   "synthetic": true,
+   "archetypes": [
+    "cloud_engineer"
+   ],
+   "skills": {
+    "programming": 64,
+    "mathematics": 46,
+    "problem_solving": 51,
+    "creativity": 44,
+    "communication": 37,
+    "technical_interest": 94
+   },
+   "interests": [
+    "cloud",
+    "security",
+    "data",
+    "business"
+   ],
+   "reference_top5": [
+    "network_engineer",
+    "it_support",
+    "cloud_engineer",
+    "devops_engineer",
+    "cybersecurity_analyst"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-048",
+   "synthetic": true,
+   "archetypes": [
+    "project_manager",
+    "ai_ml_engineer"
+   ],
+   "skills": {
+    "programming": 75,
+    "mathematics": 67,
+    "problem_solving": 79,
+    "creativity": 49,
+    "communication": 71,
+    "technical_interest": 65
+   },
+   "interests": [
+    "data",
+    "software",
+    "design"
+   ],
+   "reference_top5": [
+    "ai_ml_engineer",
+    "database_administrator",
+    "data_analyst",
+    "business_analyst",
+    "mobile_developer"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-049",
+   "synthetic": true,
+   "archetypes": [
+    "product_designer",
+    "cloud_engineer"
+   ],
+   "skills": {
+    "programming": 58,
+    "mathematics": 44,
+    "problem_solving": 94,
+    "creativity": 57,
+    "communication": 63,
+    "technical_interest": 69
+   },
+   "interests": [
+    "design",
+    "cloud",
+    "business",
+    "data",
+    "marketing"
+   ],
+   "reference_top5": [
+    "product_designer",
+    "it_support",
+    "network_engineer",
+    "web_developer",
+    "mobile_developer"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-050",
+   "synthetic": true,
+   "archetypes": [
+    "product_designer"
+   ],
+   "skills": {
+    "programming": 46,
+    "mathematics": 29,
+    "problem_solving": 50,
+    "creativity": 86,
+    "communication": 52,
+    "technical_interest": 52
+   },
+   "interests": [
+    "design"
+   ],
+   "reference_top5": [
+    "uiux_designer",
+    "product_designer",
+    "web_developer",
+    "mobile_developer",
+    "digital_marketing"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-051",
+   "synthetic": true,
+   "archetypes": [
+    "devops_engineer"
+   ],
+   "skills": {
+    "programming": 67,
+    "mathematics": 16,
+    "problem_solving": 88,
+    "creativity": 39,
+    "communication": 64,
+    "technical_interest": 86
+   },
+   "interests": [
+    "software",
+    "cloud"
+   ],
+   "reference_top5": [
+    "devops_engineer",
+    "qa_engineer",
+    "web_developer",
+    "mobile_developer",
+    "software_developer"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-052",
+   "synthetic": true,
+   "archetypes": [
+    "ai_ml_engineer"
+   ],
+   "skills": {
+    "programming": 69,
+    "mathematics": 100,
+    "problem_solving": 86,
+    "creativity": 40,
+    "communication": 29,
+    "technical_interest": 87
+   },
+   "interests": [
+    "software",
+    "ai",
+    "data",
+    "security"
+   ],
+   "reference_top5": [
+    "ai_ml_engineer",
+    "data_scientist",
+    "qa_engineer",
+    "devops_engineer",
+    "software_developer"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-053",
+   "synthetic": true,
+   "archetypes": [
+    "network_engineer",
+    "data_scientist"
+   ],
+   "skills": {
+    "programming": 67,
+    "mathematics": 56,
+    "problem_solving": 74,
+    "creativity": 42,
+    "communication": 46,
+    "technical_interest": 69
+   },
+   "interests": [
+    "security",
+    "cloud",
+    "software"
+   ],
+   "reference_top5": [
+    "network_engineer",
+    "it_support",
+    "devops_engineer",
+    "cybersecurity_analyst",
+    "cloud_engineer"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-054",
+   "synthetic": true,
+   "archetypes": [
+    "ai_ml_engineer"
+   ],
+   "skills": {
+    "programming": 84,
+    "mathematics": 79,
+    "problem_solving": 93,
+    "creativity": 48,
+    "communication": 36,
+    "technical_interest": 80
+   },
+   "interests": [
+    "data",
+    "ai",
+    "cloud"
+   ],
+   "reference_top5": [
+    "data_scientist",
+    "ai_ml_engineer",
+    "database_administrator",
+    "data_analyst",
+    "business_analyst"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-055",
+   "synthetic": true,
+   "archetypes": [
+    "cybersecurity_analyst"
+   ],
+   "skills": {
+    "programming": 69,
+    "mathematics": 59,
+    "problem_solving": 100,
+    "creativity": 39,
+    "communication": 34,
+    "technical_interest": 87
+   },
+   "interests": [
+    "security",
+    "data",
+    "marketing"
+   ],
+   "reference_top5": [
+    "network_engineer",
+    "cybersecurity_analyst",
+    "database_administrator",
+    "it_support",
+    "data_scientist"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-056",
+   "synthetic": true,
+   "archetypes": [
+    "uiux_designer"
+   ],
+   "skills": {
+    "programming": 37,
+    "mathematics": 51,
+    "problem_solving": 59,
+    "creativity": 89,
+    "communication": 81,
+    "technical_interest": 64
+   },
+   "interests": [
+    "design",
+    "ai",
+    "cloud",
+    "business"
+   ],
+   "reference_top5": [
+    "product_designer",
+    "uiux_designer",
+    "it_support",
+    "digital_marketing",
+    "web_developer"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-057",
+   "synthetic": true,
+   "archetypes": [
+    "qa_engineer"
+   ],
+   "skills": {
+    "programming": 73,
+    "mathematics": 32,
+    "problem_solving": 82,
+    "creativity": 27,
+    "communication": 74,
+    "technical_interest": 98
+   },
+   "interests": [
+    "design"
+   ],
+   "reference_top5": [
+    "web_developer",
+    "mobile_developer",
+    "product_designer",
+    "uiux_designer",
+    "devops_engineer"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-058",
+   "synthetic": true,
+   "archetypes": [
+    "business_analyst"
+   ],
+   "skills": {
+    "programming": 37,
+    "mathematics": 57,
+    "problem_solving": 78,
+    "creativity": 59,
+    "communication": 85,
+    "technical_interest": 61
+   },
+   "interests": [
+    "business",
+    "ai"
+   ],
+   "reference_top5": [
+    "project_manager",
+    "business_analyst",
+    "digital_marketing",
+    "data_analyst",
+    "product_designer"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-059",
+   "synthetic": true,
+   "archetypes": [
+    "database_administrator"
+   ],
+   "skills": {
+    "programming": 58,
+    "mathematics": 74,
+    "problem_solving": 58,
+    "creativity": 44,
+    "communication": 42,
+    "technical_interest": 62
+   },
+   "interests": [
+    "data",
+    "marketing",
+    "software"
+   ],
+   "reference_top5": [
+    "database_administrator",
+    "data_analyst",
+    "ai_ml_engineer",
+    "data_scientist",
+    "business_analyst"
+   ],
+   "split": "holdout"
+  },
+  {
+   "id": "syn-060",
+   "synthetic": true,
+   "archetypes": [
+    "cloud_engineer"
+   ],
+   "skills": {
+    "programming": 74,
+    "mathematics": 45,
+    "problem_solving": 69,
+    "creativity": 34,
+    "communication": 56,
+    "technical_interest": 90
+   },
+   "interests": [
+    "cloud"
+   ],
+   "reference_top5": [
+    "cloud_engineer",
+    "network_engineer",
+    "devops_engineer",
+    "it_support",
+    "qa_engineer"
+   ],
+   "split": "holdout"
+  }
+ ]
+}

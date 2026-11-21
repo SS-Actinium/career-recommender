@@ -14,8 +14,9 @@ import numpy as np
 from .data import DATA_DIR, SKILLS, careers, interests, target_matrix
 from .interest import interest_match
 
-N_PROFILES = 60
-N_TRAIN = 40
+N_PROFILES = 500
+N_TRAIN = 350
+N_VAL = 75  # the remaining 75 are the untouched test split
 SEED = 7
 NOISE_SD = 12.0
 BLEND_SHARE = 0.2
@@ -68,23 +69,28 @@ def generate_profiles(n: int = N_PROFILES, seed: int = SEED) -> list[dict[str, A
             "skills": {s: int(v) for s, v in zip(SKILLS, x)},
             "interests": selected,
             "reference_top5": [cs[i]["id"] for i in reference_top5(x, selected)],
-            "split": "train" if k < N_TRAIN else "holdout",
+            "split": "train" if k < N_TRAIN else "val" if k < N_TRAIN + N_VAL else "test",
         })
     return profiles
 
 
 def save_profiles(path=DATA_DIR / "reference_profiles.json") -> list[dict[str, Any]]:
     profiles = generate_profiles()
-    payload = {"_note": "SYNTHETIC profiles for GA training and evaluation. Not real student data.",
-               "seed": SEED, "n_train": N_TRAIN, "profiles": profiles}
+    head = {"_note": "SYNTHETIC profiles for GA training and evaluation. Not real student data.",
+            "seed": SEED, "n_train": N_TRAIN, "n_val": N_VAL, "n_test": len(profiles) - N_TRAIN - N_VAL}
+    body = ",\n".join("  " + json.dumps(p) for p in profiles)  # one profile per line keeps the file diffable
     with open(path, "w", encoding="utf-8") as fh:
-        json.dump(payload, fh, indent=1)
+        fh.write(json.dumps(head)[:-1] + ',\n "profiles": [\n' + body + "\n]}\n")
     return profiles
 
 
 def load_profiles(path=DATA_DIR / "reference_profiles.json") -> list[dict[str, Any]]:
     with open(path, encoding="utf-8") as fh:
         return json.load(fh)["profiles"]
+
+
+def split(profiles: list[dict[str, Any]], name: str) -> list[dict[str, Any]]:
+    return [p for p in profiles if p["split"] == name]
 
 
 def as_arrays(profiles: list[dict[str, Any]]) -> tuple[np.ndarray, list[list[str]], list[list[int]]]:

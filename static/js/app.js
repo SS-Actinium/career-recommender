@@ -1,13 +1,18 @@
 /* CareerCompass frontend: vanilla JS single-page app with hash routing.
-   All scoring happens on the Flask backend. This file only collects input and renders results. */
+   All scoring happens on the Flask backend. This file collects input, renders results,
+   keeps a per-browser history (localStorage) and hosts the shared helpers used by sc.js. */
 (() => {
   "use strict";
 
   const app = document.getElementById("app");
   const charts = [];
   const SETS = ["Low", "Medium", "High"];
-  const COLORS = { brand: "#3d4ed8", accent: "#0f9d8a", warn: "#d97706", grey: "#9aa1b2",
-                   low: "#d97706", medium: "#3d4ed8", high: "#0f9d8a" };
+  const OUT_SETS = ["Very Low", "Low", "Medium", "High", "Very High"];
+  const COLORS = { brand: "#3d4ed8", accent: "#0f9d8a", warn: "#d97706", grey: "#9aa1b2", rose: "#c0396b",
+                   low: "#d97706", medium: "#3d4ed8", high: "#0f9d8a",
+                   out: ["#b91c1c", "#d97706", "#3d4ed8", "#0f9d8a", "#7c3aed"] };
+  const HISTORY_KEY = "cc_history_v2";
+  const HISTORY_MAX = 30;
 
   const state = {
     meta: null,
@@ -36,10 +41,12 @@
   }
   function clearCharts() { while (charts.length) charts.pop().destroy(); }
   function chart(id, config) {
-    const el = document.getElementById(id);
-    if (!el || typeof Chart === "undefined") return;
+    const el = typeof id === "string" ? document.getElementById(id) : id;
+    if (!el || typeof Chart === "undefined") return null;
     config.options = { responsive: true, maintainAspectRatio: false, animation: false, ...config.options };
-    charts.push(new Chart(el, config));
+    const c = new Chart(el, config);
+    charts.push(c);
+    return c;
   }
   function label(skillId) { return state.meta?.skills.find(s => s.id === skillId)?.label || skillId; }
   function interestLabel(id) { return state.meta?.interests.find(i => i.id === id)?.label || id; }
@@ -50,8 +57,40 @@
   }
   function render(html) { clearCharts(); app.innerHTML = html; app.focus({ preventScroll: true }); window.scrollTo(0, 0); }
   function noResult() {
-    return `<div class="card stack"><h2>No results yet</h2><p class="muted">Complete the assessment to see your recommendations.</p>
-      <a class="btn" href="#/instructions">Start Career Assessment</a></div>`;
+    return `<div class="card stack"><h2>No results yet</h2><p class="muted">Complete the assessment, or open a past result from History.</p>
+      <div class="row"><a class="btn" href="#/instructions">Start Career Assessment</a><a class="btn secondary" href="#/history">Open History</a></div></div>`;
+  }
+  function bandPill(fit) { return `<span class="pill band-${esc(fit.key)}">${esc(fit.label)}</span>`; }
+  function fmtDate(iso) {
+    try { return new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }); } catch { return iso; }
+  }
+  function prefText(prefs) {
+    return Object.entries(prefs || {}).filter(([, v]) => v).map(([k, v]) => `${esc(k.replace("_", " "))}: <b>${esc(v)}</b>`).join(" · ");
+  }
+
+  // ---------- history (this browser only) ----------
+  function readHistory() {
+    try { const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]"); return Array.isArray(h) ? h : []; } catch { return []; }
+  }
+  function writeHistory(list) {
+    let items = list.slice(0, HISTORY_MAX);
+    for (;;) {  // shrink if the browser quota is hit
+      try { localStorage.setItem(HISTORY_KEY, JSON.stringify(items)); return true; } catch {
+        if (items.length <= 1) return false;
+        items = items.slice(0, -1);
+      }
+    }
+  }
+  function addHistory(result, tag) {
+    const entry = { id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, at: new Date().toISOString(),
+                    tag: tag || null, result };
+    writeHistory([entry, ...readHistory()]);
+    return entry;
+  }
+  function updateHistorySummary(result) {
+    const list = readHistory();
+    const e = list.find(x => x.result?.input && JSON.stringify(x.result.input) === JSON.stringify(result.input));
+    if (e) { e.result.summary = result.summary; writeHistory(list); }
   }
 
   // ---------- pages ----------
@@ -61,8 +100,9 @@
         <div>
           <span class="pill">Soft Computing · MCA project prototype</span>
           <h1>Find career paths that fit how you think and what you enjoy.</h1>
-          <p class="lead">Rate six skills, choose your interests, and get five ranked career suggestions with clear reasons and skill gaps.
-            The backend uses a Mamdani fuzzy inference system, with input weights tuned by a genetic algorithm.</p>
+          <p class="lead">Rate six skills, rank your interests, add work preferences, and get five ranked career suggestions with
+            fit bands, clear reasons, skill gaps and a learning roadmap. The backend uses a Mamdani fuzzy inference system whose input
+            weights were tuned by a genetic algorithm.</p>
           <div class="row"><a class="btn" href="#/instructions">Start Career Assessment</a>
             <a class="btn secondary" href="#/analysis">See the algorithms</a></div>
         </div>
@@ -70,16 +110,16 @@
           <h3>How it works</h3>
           <ol class="steps">
             <li><b>Fuzzification.</b> Each 0–100 rating becomes degrees of Low, Medium and High.</li>
-            <li><b>Fuzzy rules.</b> 18 Mamdani systems (one per career) evaluate IF–THEN rules.</li>
-            <li><b>GA weights.</b> A genetic algorithm tuned how much each skill matters.</li>
-            <li><b>Ranking.</b> 70% fuzzy suitability and 30% interest match give the final score.</li>
+            <li><b>Fuzzy rules.</b> 18 Mamdani systems (one per career, 11 rules each) produce a suitability from Very Low to Very High.</li>
+            <li><b>GA weights.</b> A genetic algorithm tuned how much each skill matters, on 500 synthetic profiles.</li>
+            <li><b>Ranking.</b> Interest and work preferences scale the fuzzy suitability: Score = s × (0.65 + 0.25·I + 0.10·W). They can lower a career you are not drawn to, but never inflate weak skills.</li>
           </ol>
         </div>
       </section>
       <section class="grid grid-3">
         <div class="card"><h3>Fuzzy Logic</h3><p class="muted">A rating of 65 is not just "medium" or just "high". It is partly both, and the rules reason with those degrees.</p></div>
-        <div class="card"><h3>Genetic Algorithm</h3><p class="muted">The GA evolved 30 candidate weight vectors over 40 generations, using selection, crossover and mutation.</p></div>
-        <div class="card"><h3>Explainable results</h3><p class="muted">Each suggestion shows the rules that fired, your strongest factors, and the skills to build next.</p></div>
+        <div class="card"><h3>Genetic Algorithm</h3><p class="muted">The GA evolved 30 candidate weight vectors with selection, crossover and mutation, and kept the one that did best on a separate validation set.</p></div>
+        <div class="card"><h3>Explainable results</h3><p class="muted">Each suggestion shows the rules that fired, the score breakdown, your strongest factors and the skills to build next.</p></div>
       </section>
       <p class="notice" style="margin-top:24px">These recommendations are guidance for exploration, not a guarantee of career success.
         They do not replace advice from a qualified career counsellor.</p>`);
@@ -94,7 +134,7 @@
           <li><b>Profile (optional).</b> A display name, or leave it blank to stay anonymous.</li>
           <li><b>Skill ratings.</b> Rate six skills from 0 to 100. These are <b>self-reported</b>, not exam marks.</li>
           <li><b>Interests.</b> Pick the areas you enjoy and put them in order. Your first choice counts most.</li>
-          <li><b>Work preferences (optional).</b> These are shown as context only and do not change the score.</li>
+          <li><b>Work preferences (optional).</b> They make up 10% of the score multiplier. If you skip them, the score uses skills and interests only.</li>
         </ol>
         <h3>Using the 0–100 scale</h3>
         <table><tbody>
@@ -105,12 +145,15 @@
         </tbody></table>
         <p class="notice info"><b>Privacy:</b> we do not ask for your email, age, gender or any other personal details.
           Your answers go to the server only to compute results, and nothing is saved on the server.
-          The latest result stays in this browser tab until you close it.</p>
+          Your results are kept in <b>this browser's</b> History page until you delete them.
+          ${state.meta?.llm_configured ? "If the AI summary is enabled, only your scores and skill names are sent to the LLM service, never your name." : ""}</p>
         <div class="row"><a class="btn" href="#/assess">Begin assessment</a></div>
       </div>`);
   }
 
   const STEP_TITLES = ["Profile", "Skill ratings", "Interests", "Work preferences", "Review"];
+  const PREF_NAMES = { work_type: "Preferred work type", environment: "Preferred environment", activity: "Preferred activity",
+                       advanced_math: "Willingness to learn advanced mathematics" };
 
   function assess() {
     const f = state.form, m = state.meta, step = state.step;
@@ -119,7 +162,7 @@
     if (step === 0) {
       body = `<div class="field"><label for="dn">Display name (optional)</label>
         <input id="dn" type="text" maxlength="40" value="${esc(f.display_name)}" placeholder="e.g. Student A">
-        <p class="muted small">Leave this blank to stay anonymous.</p></div>`;
+        <p class="muted small">Leave this blank to stay anonymous. The name is only shown in this browser.</p></div>`;
     } else if (step === 1) {
       body = `<p class="muted">Self-reported ratings on a 0–100 scale.</p>` + m.skills.map(s => `
         <div class="field"><label for="sk-${s.id}">${esc(s.label)}</label>
@@ -138,10 +181,10 @@
           : `<p class="muted small">No interests selected yet.</p>`}
         <div id="err" class="field-error"></div>`;
     } else if (step === 3) {
-      const names = { work_type: "Preferred work type", environment: "Preferred environment", activity: "Preferred activity", advanced_math: "Willingness to learn advanced mathematics" };
-      body = `<p class="notice info">These answers are optional. They appear in your results for context, but they do <b>not</b> change the score.</p>` +
+      body = `<p class="notice info">These answers are optional. Each answered preference is compared with the career's work profile
+          (match 1, partial 0.5, mismatch 0) and the average makes up <b>10% of the score multiplier</b>. Skip them all and the score uses skills and interests only.</p>` +
         Object.entries(m.work_preferences).map(([k, opts]) => `
-          <div class="field"><label for="wp-${k}">${names[k] || k}</label>
+          <div class="field"><label for="wp-${k}">${PREF_NAMES[k] || k}</label>
             <select id="wp-${k}" data-pref="${k}"><option value="">Prefer not to say</option>
               ${opts.map(o => `<option value="${o}" ${f.work_preferences[k] === o ? "selected" : ""}>${o[0].toUpperCase() + o.slice(1)}</option>`).join("")}
             </select></div>`).join("");
@@ -150,7 +193,7 @@
           <tr><th>Display name</th><td>${esc(f.display_name || "Anonymous")}</td></tr>
           ${m.skills.map(s => `<tr><th>${esc(s.label)}</th><td class="num">${f.skills[s.id]}</td></tr>`).join("")}
           <tr><th>Interests (ranked)</th><td>${f.interests.map((i, k) => `${k + 1}. ${esc(interestLabel(i))}`).join("<br>")}</td></tr>
-          <tr><th>Work preferences</th><td>${Object.entries(f.work_preferences).filter(([, v]) => v).map(([k, v]) => `${esc(k.replace("_", " "))}: ${esc(v)}`).join("<br>") || "—"}</td></tr>
+          <tr><th>Work preferences</th><td>${prefText(f.work_preferences) || "—"}</td></tr>
         </tbody></table><div id="err" class="field-error"></div>`;
     }
     render(`<div class="card" style="max-width:760px">
@@ -189,7 +232,7 @@
       e.preventDefault();
       const err = validateStep(step);
       if (err) { const el = document.getElementById("err"); if (el) el.textContent = err; return; }
-      if (step < 4) { state.step++; assess(); } else submit();
+      if (step < 4) { state.step++; assess(); } else location.hash = "#/processing";
     });
   }
 
@@ -205,25 +248,30 @@
     return null;
   }
 
-  async function submit() {
-    location.hash = "#/processing";
+  function payloadFromForm() {
+    const f = state.form;
+    return { display_name: f.display_name, skills: { ...f.skills }, interests: [...f.interests],
+             work_preferences: Object.fromEntries(Object.entries(f.work_preferences).filter(([, v]) => v)) };
+  }
+
+  async function runAssessment(payload) {
+    const r = await api("/api/assess", { method: "POST", body: JSON.stringify(payload) });
+    r.input = payload;
+    r.created_at = new Date().toISOString();
+    return r;
   }
 
   async function processing() {
     if (!state.meta) return go("#/instructions");
-    const f = state.form;
     render(`<div class="card" style="max-width:560px;margin:40px auto;text-align:center">
       <div class="spinner" role="status" aria-label="Processing"></div>
       <h2 id="pmsg">Evaluating your profile…</h2>
       <p class="muted small">The server fuzzifies your ratings and runs 18 Mamdani inference systems with the <b>saved</b> GA-optimised weights.
         No genetic algorithm runs during your request.</p>
       <div id="perr"></div></div>`);
-    const payload = { display_name: f.display_name, skills: f.skills, interests: f.interests,
-      work_preferences: Object.fromEntries(Object.entries(f.work_preferences).filter(([, v]) => v)) };
     try {
-      const r = await api("/api/assess", { method: "POST", body: JSON.stringify(payload) });
-      const msg = document.getElementById("pmsg"); if (msg) msg.textContent = "Calculating career matches…";
-      state.result = r; saveResult(r);
+      const r = await runAssessment(payloadFromForm());
+      state.result = r; saveResult(r); addHistory(r);
       location.hash = "#/results";
     } catch (e) {
       const fields = e.body?.fields ? `<ul>${Object.entries(e.body.fields).map(([k, v]) => `<li>${esc(k)}: ${esc(v)}</li>`).join("")}</ul>` : "";
@@ -237,80 +285,135 @@
     }
   }
 
+  function summarySource(sm) {
+    if (sm.source === "groq") return `<span class="pill accent">AI-written · Groq (${esc(sm.model)})</span>`;
+    return `<span class="pill">Template summary</span>`;
+  }
+
+  async function loadSummary(r) {
+    const box = document.getElementById("summary-box");
+    if (!box || !r.input || r.summary?.source === "groq") return;
+    if (!(r.llm_configured ?? state.meta?.llm_configured)) return;
+    box.querySelector(".summary-src").innerHTML = `<span class="pill">Asking the LLM…</span>`;
+    try {
+      const sm = await api("/api/summary", { method: "POST", body: JSON.stringify(r.input) });
+      r.summary = sm; saveResult(r); updateHistorySummary(r);
+      if (!document.body.contains(box)) return;
+      box.querySelector(".summary-text").textContent = sm.text;
+      box.querySelector(".summary-src").innerHTML = summarySource(sm) + (sm.reason ? ` <span class="muted small">${esc(sm.reason)}</span>` : "");
+    } catch {
+      if (document.body.contains(box)) box.querySelector(".summary-src").innerHTML = `${summarySource(r.summary)} <span class="muted small">The LLM request failed, so the template is shown.</span>`;
+    }
+  }
+
   function results() {
     const r = state.result;
     if (!r) return render(noResult());
     const recs = r.recommendations;
-    const prefs = Object.entries(r.work_preferences || {});
+    const prefs = prefText(r.work_preferences);
+    const hasPrefs = recs[0].breakdown?.preference_points != null;
     render(`
-      <div class="row no-print" style="margin-bottom:12px"><span class="pill accent">${esc(r.weights_source)}</span></div>
+      <div class="row no-print" style="margin-bottom:12px"><span class="pill accent">${esc(r.weights_source)}</span>
+        ${r.created_at ? `<span class="muted small">${esc(fmtDate(r.created_at))}</span>` : ""}</div>
       <h1>${r.display_name ? `${esc(r.display_name)}, here are your top matches` : "Your top career matches"}</h1>
-      <p class="muted">Ranked by suitability match: 70% fuzzy suitability and 30% interest match. This is not a probability of success.</p>
+      <p class="muted">Ranked by suitability match. <code>${esc(r.score_formula)}</code>. The score can never exceed the fuzzy suitability s. Fit bands: Strong ≥ 70, Good 55–70, Moderate 40–55, Weak &lt; 40.
+        This is not a probability of success.</p>
+      <div class="card summary" id="summary-box">
+        <div class="row"><h3 style="margin:0">Summary</h3><span class="spacer"></span><span class="summary-src">${summarySource(r.summary)}</span></div>
+        <p class="summary-text">${esc(r.summary.text)}</p>
+      </div>
       <div class="grid grid-2" style="margin:20px 0">
-        <div class="card"><h3>Score composition, top 5</h3><div class="chart-box"><canvas id="cmp"></canvas></div></div>
+        <div class="card"><h3>Score breakdown, top 5</h3><div class="chart-box"><canvas id="cmp"></canvas></div></div>
         <div class="card"><h3>All 18 careers</h3><div class="chart-box"><canvas id="all"></canvas></div></div>
       </div>
-      ${prefs.length ? `<p class="notice info"><b>Your stated work preferences</b> (context only, not scored): ${prefs.map(([k, v]) => `${esc(k.replace("_", " "))}: <b>${esc(v)}</b>`).join(" · ")}</p>` : ""}
+      ${prefs ? `<p class="notice info"><b>Your work preferences</b> (10% of the score multiplier): ${prefs}</p>`
+              : `<p class="notice info">No work preferences were given, so the score uses skills and interests only.</p>`}
       <div class="stack" style="margin-top:16px">${recs.map(card).join("")}</div>
       <div class="row no-print" style="margin-top:24px">
-        <a class="btn" href="#/analysis">View Soft Computing analysis</a>
-        <button class="btn secondary" id="print">Print / save report as PDF</button>
-        <a class="btn secondary" href="#/assess">Retake assessment</a>
+        <a class="btn" href="#/report">Download PDF report</a>
+        <a class="btn secondary" href="#/compare/${recs[0].id}/${recs[1].id}">Compare careers</a>
+        <a class="btn secondary" href="#/analysis">Soft Computing analysis</a>
+        <a class="btn secondary" href="#/history">History</a>
+        <a class="btn ghost" href="#/assess">Retake assessment</a>
       </div>
       <p class="notice" style="margin-top:20px">${esc(r.disclaimer)}</p>`);
-    document.getElementById("print").onclick = () => window.print();
-    chart("cmp", { type: "bar", data: { labels: recs.map(x => x.name), datasets: [
-        { label: "Fuzzy part (0.7 × s)", data: recs.map(x => +(0.7 * x.fis_suitability).toFixed(1)), backgroundColor: COLORS.brand },
-        { label: "Interest part (30 × I)", data: recs.map(x => +(30 * x.interest_match).toFixed(1)), backgroundColor: COLORS.accent }] },
-      options: { indexAxis: "y", scales: { x: { stacked: true, max: 100, title: { display: true, text: "Suitability match (0–100)" } }, y: { stacked: true } } } });
+    const ds = [
+      { label: "Base (s × 0.65)", data: recs.map(x => x.breakdown.fis_points), backgroundColor: COLORS.brand },
+      { label: "Interest part", data: recs.map(x => x.breakdown.interest_points), backgroundColor: COLORS.accent }];
+    if (hasPrefs) ds.push({ label: "Preference part", data: recs.map(x => x.breakdown.preference_points), backgroundColor: COLORS.warn });
+    chart("cmp", { type: "bar", data: { labels: recs.map(x => x.name), datasets: ds },
+      options: { indexAxis: "y", scales: { x: { stacked: true, min: 0, max: 100, title: { display: true, text: "Points (0–100)" } }, y: { stacked: true } } } });
+    const bandColor = { strong: COLORS.accent, good: COLORS.brand, moderate: COLORS.warn, weak: COLORS.grey };
     chart("all", { type: "bar", data: { labels: r.all_scores.map(x => x.name), datasets: [{ label: "Score",
-        data: r.all_scores.map(x => x.score), backgroundColor: r.all_scores.map((_, i) => i < 5 ? COLORS.brand : COLORS.grey) }] },
-      options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { max: 100 } , y: { ticks: { font: { size: 10 } } } } } });
+        data: r.all_scores.map(x => x.score), backgroundColor: r.all_scores.map(x => bandColor[x.fit.key]) }] },
+      options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { min: 0, max: 100 }, y: { ticks: { font: { size: 10 } } } } } });
+    loadSummary(r);
   }
 
   function card(x) {
+    const b = x.breakdown;
     return `<article class="card rec">
       <div class="rec-head"><div class="rank-badge">${x.rank}</div>
         <div><h2 style="margin:0">${esc(x.name)}</h2><p class="muted" style="margin:.2rem 0 0">${esc(x.description)}</p></div>
-        <div class="score"><b>${x.score.toFixed(1)}%</b><div class="muted small">suitability match</div></div></div>
+        <div class="score"><b>${x.score.toFixed(1)}</b><span class="muted"> / 100</span><div>${bandPill(x.fit)}</div></div></div>
       <div class="bar" aria-hidden="true"><i style="width:${x.score}%"></i></div>
       <p>${esc(x.explanation)}</p>
+      <p class="small muted">Breakdown: fuzzy suitability s = ${x.fis_suitability.toFixed(1)} × multiplier ${b.multiplier.toFixed(3)} = ${x.score.toFixed(1)}
+        (base ${b.fis_points.toFixed(1)} + interest ${b.interest_points.toFixed(1)}${b.preference_points != null ? ` + preferences ${b.preference_points.toFixed(1)}` : ""} points)</p>
       <div class="grid grid-3">
         <div><h3>Strongest factors</h3><div class="tags">${x.strengths.map(s => `<span class="pill accent">${esc(s)}</span>`).join("") || "—"}</div></div>
         <div><h3>To improve</h3><div class="tags">${x.gaps.slice(0, 3).map(g => `<span class="pill warn">${esc(g.label)} +${g.gap.toFixed(0)}</span>`).join("") || `<span class="muted small">No gaps: you meet every target.</span>`}</div></div>
         <div><h3>Key skills</h3><p class="small muted" style="margin:0">${x.key_skills.map(esc).join(" · ")}</p></div>
       </div>
-      <details><summary>Why? Fuzzy rules that fired (FIS suitability ${x.fis_suitability.toFixed(1)}, interest match ${(x.interest_match * 100).toFixed(0)}%)</summary>
+      <details><summary>Why? Fuzzy rules that fired (FIS suitability ${x.fis_suitability.toFixed(1)}, interest match ${(x.interest_match * 100).toFixed(0)}%${x.preference_match != null ? `, preference match ${(x.preference_match * 100).toFixed(0)}%` : ""})</summary>
         ${x.fired_rules.map(f => `<div class="rule">[${f.strength.toFixed(2)}] ${esc(f.text)}</div>`).join("") || `<p class="muted small">No rule fired for this career.</p>`}
+        ${x.preference_detail?.length ? `<p class="small" style="margin-top:8px"><b>Preference check:</b> ${x.preference_detail.map(d => `${esc(d.preference.replace("_", " "))} = ${esc(d.value)} → ${d.match === 1 ? "match" : d.match === 0.5 ? "partial" : "mismatch"}`).join(" · ")}</p>` : ""}
       </details>
-      <div class="row no-print"><a class="btn secondary" href="#/career/${x.id}">View career details</a>
-        <a class="btn ghost" href="#/gap/${x.id}">Skill gap analysis →</a></div>
+      <div class="row no-print"><a class="btn secondary" href="#/career/${x.id}">Career details</a>
+        <a class="btn ghost" href="#/gap/${x.id}">Skill gaps and roadmap →</a></div>
     </article>`;
   }
 
   async function careerPage(id) {
     const c = await api(`/api/careers/${encodeURIComponent(id)}`);
     const rec = state.result?.recommendations.find(x => x.id === id);
+    const any = state.result?.all_scores.find(x => x.id === id);
+    const wp = c.work_profile;
     render(`<div class="stack">
       <a href="#/results" class="no-print">← Back to results</a>
       <div class="card stack">
         <h1>${esc(c.name)}</h1><p class="muted">${esc(c.description)}</p>
-        ${rec ? `<p><span class="pill">Your match: ${rec.score.toFixed(1)}%</span></p>` : ""}
+        ${any ? `<p><span class="pill">Your match: ${any.score.toFixed(1)} / 100</span> ${bandPill(any.fit)}</p>` : ""}
         <div class="grid grid-2">
           <div><h3>Typical responsibilities</h3><ul>${c.responsibilities.map(r => `<li>${esc(r)}</li>`).join("")}</ul></div>
           <div><h3>Required skills</h3><ul>${c.key_skills.map(r => `<li>${esc(r)}</li>`).join("")}</ul></div>
         </div>
+        <div><h3>Work profile (model assumption)</h3><p class="small">Work type: <b>${wp.work_type.map(esc).join(", ")}</b> · Environment: <b>${esc(wp.environment)}</b>
+          · Activities: <b>${wp.activity.map(esc).join(", ")}</b> · Maths demand: <b>${esc(wp.math_demand)}</b></p></div>
         ${rec ? `<div class="grid grid-2">
           <div><h3>Your matching strengths</h3><ul>${rec.skills.filter(s => s.gap <= 0).map(s => `<li>${esc(s.label)}: ${s.student} (target ${s.target})</li>`).join("") || "<li>None yet</li>"}</ul></div>
           <div><h3>Your skill gaps</h3><ul>${rec.gaps.map(g => `<li>${esc(g.label)}: +${g.gap.toFixed(0)} needed</li>`).join("") || "<li>No gaps</li>"}</ul></div></div>` : ""}
-        <div><h3>Suggested learning roadmap</h3><ol class="steps">${c.learning.map(l => `<li>${esc(l)}</li>`).join("")}</ol></div>
+        <div><h3>Suggested learning path</h3><ol class="steps">${c.learning.map(l => `<li>${esc(l)}</li>`).join("")}</ol></div>
         <div><h3>Related career paths</h3><div class="tags">${c.related.map(r => `<a class="pill" href="#/career/${r.id}">${esc(r.name)}</a>`).join("")}</div></div>
         <h3>Model target profile</h3>
         <table><thead><tr><th>Skill</th><th class="num">Target</th></tr></thead><tbody>
           ${Object.entries(c.targets).map(([k, v]) => `<tr><td>${esc(label(k))}</td><td class="num">${v}</td></tr>`).join("")}</tbody></table>
         <p class="notice small">${esc(c.note)} Learning suggestions are starting points. No job placement is implied.</p>
-        ${rec ? `<a class="btn" href="#/gap/${c.id}">Open skill gap analysis</a>` : ""}
+        ${rec ? `<a class="btn" href="#/gap/${c.id}">Open skill gaps and roadmap</a>` : ""}
       </div></div>`);
+  }
+
+  function roadmapHtml(rec) {
+    if (!rec.roadmap?.length) return `<p>You meet every target level for ${esc(rec.name)}. Focus on depth: real projects, a portfolio and mentoring others.</p>`;
+    return `<div class="roadmap">${rec.roadmap.map((g, i) => `
+      <div class="road-step prio-${g.priority}">
+        <div class="road-head"><span class="road-n">${i + 1}</span><b>${esc(g.label)}</b>
+          <span class="pill ${g.priority === "high" ? "warn" : ""}">${esc(g.priority)} priority</span>
+          <span class="muted small">${g.current} → ${g.target} (gap ${g.gap.toFixed(0)}) · ${esc(g.stage)} stage</span></div>
+        <ul>${g.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ul>
+      </div>`).join("")}</div>
+      <p class="muted small">Priority comes from the gap size (high ≥ 25, medium ≥ 10). The stage comes from your current rating
+        (foundation &lt; 40, intermediate &lt; 70, advanced ≥ 70). Steps are generic starting points, not a curriculum.</p>`;
   }
 
   function gapPage(id) {
@@ -320,18 +423,18 @@
     render(`<div class="stack">
       <a href="#/results" class="no-print">← Back to results</a>
       <div class="card stack">
-        <h1>Skill gap: ${esc(rec.name)}</h1>
+        <h1>Skill gaps: ${esc(rec.name)}</h1>
         <p class="muted">Your self-reported level compared with the model's target profile. Target values are model assumptions.</p>
         <div class="chart-box tall"><canvas id="gap"></canvas></div>
         <table><thead><tr><th>Skill</th><th class="num">You</th><th class="num">Target</th><th class="num">Gap</th></tr></thead><tbody>
           ${rec.skills.map(s => `<tr><td>${esc(s.label)}</td><td class="num">${s.student}</td><td class="num">${s.target}</td>
             <td class="num">${s.gap > 0 ? `<span class="pill warn">+${s.gap.toFixed(0)}</span>` : `<span class="pill accent">met</span>`}</td></tr>`).join("")}
         </tbody></table>
+        <div><h3>Your learning roadmap</h3>${roadmapHtml(rec)}</div>
         <div class="grid grid-2">
-          <div><h3>Priority order for learning</h3>${rec.gaps.length ? `<ol>${rec.gaps.map(g => `<li><b>${esc(g.label)}</b> (gap ${g.gap.toFixed(0)})</li>`).join("")}</ol>` : "<p>You meet every target level. Focus on depth and projects.</p>"}</div>
           <div><h3>Existing strengths</h3>${strengths.length ? `<ul>${strengths.map(s => `<li>${esc(s.label)}</li>`).join("")}</ul>` : "<p class='muted'>None of your ratings meet the targets yet.</p>"}</div>
+          <div><h3>Career-specific topics</h3><ul>${rec.learning.map(l => `<li>${esc(l)}</li>`).join("")}</ul></div>
         </div>
-        <div><h3>Suggested improvement topics</h3><ul>${rec.learning.map(l => `<li>${esc(l)}</li>`).join("")}</ul></div>
       </div></div>`);
     chart("gap", { type: "radar", data: { labels: rec.skills.map(s => s.label), datasets: [
         { label: "You", data: rec.skills.map(s => s.student), borderColor: COLORS.brand, backgroundColor: "rgba(61,78,216,.15)" },
@@ -339,99 +442,160 @@
       options: { scales: { r: { min: 0, max: 100, ticks: { stepSize: 25 } } } } });
   }
 
-  async function analysisPage() {
-    await ensureAnalysis();
-    const a = state.analysis, r = state.result, ga = a.ga;
-    const ev = ga.evaluation;
-    const fmt = v => (v == null ? "—" : v.toFixed(4));
-    const top = r?.recommendations[0];
+  async function comparePage(a, b) {
+    const r = state.result;
+    if (!r) return render(noResult());
+    const list = await api("/api/careers");
+    const ids = list.careers.map(c => c.id);
+    a = ids.includes(a) ? a : r.all_scores[0].id;
+    b = ids.includes(b) && b !== a ? b : r.all_scores.find(x => x.id !== a).id;
+    const [ca, cb] = await Promise.all([api(`/api/careers/${a}`), api(`/api/careers/${b}`)]);
+    const sa = r.all_scores.find(x => x.id === a), sb = r.all_scores.find(x => x.id === b);
+    const you = state.meta.skills.map(s => r.analysis.inputs[s.id]);
+    const opt = sel => list.careers.map(c => `<option value="${c.id}" ${c.id === sel ? "selected" : ""}>${esc(c.name)}</option>`).join("");
+    const row = (k, fa, fb) => `<tr><td>${k}</td><td class="num">${fa}</td><td class="num">${fb}</td></tr>`;
+    const pct = v => v == null ? "—" : `${(v * 100).toFixed(0)}%`;
     render(`<div class="stack">
-      <h1>Soft Computing analysis</h1>
-      <p class="muted">This page shows how the fuzzy logic and the genetic algorithm actually work in this system.
-        ${r ? "The student-specific charts use your latest assessment." : "Complete an assessment to see your own membership values and fired rules."}</p>
-
-      <h2>1. Fuzzy Logic (Mamdani FIS)</h2>
-      <div class="grid grid-2">
-        <div class="card"><h3>Membership functions (every input and the output)</h3><div class="chart-box"><canvas id="mf"></canvas></div>
-          <p class="small muted">Triangles: ${a.fuzzy.sets.map((n, i) => `${n} (${a.fuzzy.params[i].join(", ")})`).join(" · ")}</p></div>
-        ${r ? `<div class="card"><h3>Your membership degrees</h3><div class="chart-box"><canvas id="mu"></canvas></div>
-          <p class="small muted">GA weighting: ${esc(a.fuzzy.weighting)}</p></div>` : ""}
-      </div>
-      ${r ? `<div class="card"><h3>Selected input: your memberships</h3>
-        <table><thead><tr><th>Input</th><th class="num">Value</th>${SETS.map(s => `<th class="num">${s}</th>`).join("")}<th class="num">Weighted (L/M/H)</th></tr></thead><tbody>
-        ${Object.entries(r.analysis.memberships).map(([k, m]) => `<tr><td>${esc(label(k))}</td><td class="num">${r.analysis.inputs[k]}</td>
-          ${SETS.map(s => `<td class="num">${m[s].toFixed(2)}</td>`).join("")}
-          <td class="num">${SETS.map(s => r.analysis.weighted_memberships[k][s].toFixed(2)).join(" / ")}</td></tr>`).join("")}
-        </tbody></table></div>
-      <div class="grid grid-2">
-        <div class="card"><h3>Aggregated output and centroid: ${esc(top.name)}</h3><div class="chart-box"><canvas id="agg"></canvas></div>
-          <p class="small muted">The fired rules clip the output sets (min), the clipped sets are combined (max), and the centroid of the shaded area gives s = ${top.fis_suitability.toFixed(2)}.</p></div>
-        <div class="card"><h3>Activated rules (top 5 careers)</h3>
-          ${r.recommendations.map(x => `<p style="margin:.6rem 0 .2rem"><b>${esc(x.name)}</b>: s = ${x.fis_suitability.toFixed(1)}</p>
-            ${x.fired_rules.map(f => `<div class="rule">[${f.strength.toFixed(2)}] ${esc(f.text)}</div>`).join("")}`).join("")}</div>
-      </div>` : ""}
-      <details class="card"><summary>Full rule base (${a.fuzzy.rules.length} rules, 7 per career)</summary>
-        ${a.fuzzy.rules.map(x => `<div class="rule">${esc(x.id)}: ${esc(x.text)}</div>`).join("")}</details>
-
-      <h2>2. Genetic Algorithm</h2>
-      ${ga.missing ? `<p class="error-box">GA results file missing. Equal weights are in use. Run <code>python run_ga.py</code>.</p>` : `
-      <div class="grid grid-2">
-        <div class="card"><h3>Fitness by generation</h3><div class="chart-box"><canvas id="fit"></canvas></div></div>
-        <div class="card"><h3>Baseline vs optimised weights</h3><div class="chart-box"><canvas id="wts"></canvas></div></div>
+      <a href="#/results" class="no-print">← Back to results</a>
+      <h1>Compare two careers</h1>
+      <div class="card row no-print">
+        <label class="grow">Career A <select id="ca">${opt(a)}</select></label>
+        <label class="grow">Career B <select id="cb">${opt(b)}</select></label>
       </div>
       <div class="grid grid-2">
-        <div class="card"><h3>Settings</h3><table><tbody>
-          <tr><td>Population</td><td class="num">${ga.config.population}</td></tr>
-          <tr><td>Generations</td><td class="num">${ga.config.generations}</td></tr>
-          <tr><td>Selection</td><td class="num">Tournament (k = ${ga.config.tournament_size})</td></tr>
-          <tr><td>Crossover</td><td class="num">Blend BLX-α (α = ${ga.config.blend_alpha}), p = ${ga.config.crossover_prob}</td></tr>
-          <tr><td>Mutation</td><td class="num">Gaussian σ = ${ga.config.mutation_sigma}, p = ${ga.config.mutation_prob}</td></tr>
-          <tr><td>Elitism</td><td class="num">${ga.config.elitism}</td></tr>
-          <tr><td>Random seed</td><td class="num">${ga.config.seed}</td></tr>
-          <tr><td>Runtime</td><td class="num">${ga.runtime_seconds} s (offline, ${esc(ga.run_at)})</td></tr>
-        </tbody></table></div>
-        <div class="card"><h3>Fitness function</h3>
-          <p>${esc(ga.fitness_metric)}.</p>
-          <p class="small muted">Each chromosome holds six non-negative weights that sum to 1. For every training profile we rank all 18 careers and compare the model's top 5
-            with a reference top 5. The reference comes from a separate expert scoring function that does not use the fuzzy rules. NDCG@5 rewards putting the right careers near the top.
-            Data: ${ga.data.profiles} <b>synthetic</b> profiles (${ga.data.train} train / ${ga.data.holdout} held out).</p></div>
+        <div class="card"><h3>Your skills vs both targets</h3><div class="chart-box tall"><canvas id="radar"></canvas></div></div>
+        <div class="card"><h3>Score comparison</h3>
+          <table><thead><tr><th></th><th class="num">${esc(ca.name)}</th><th class="num">${esc(cb.name)}</th></tr></thead><tbody>
+            ${row("Final score", `<b>${sa.score.toFixed(1)}</b>`, `<b>${sb.score.toFixed(1)}</b>`)}
+            ${row("Fit band", bandPill(sa.fit), bandPill(sb.fit))}
+            ${row("Rank (of 18)", r.all_scores.indexOf(sa) + 1, r.all_scores.indexOf(sb) + 1)}
+            ${row("Fuzzy suitability s", sa.fis_suitability.toFixed(1), sb.fis_suitability.toFixed(1))}
+            ${row("Interest match I", pct(sa.interest_match), pct(sb.interest_match))}
+            ${row("Preference match W", pct(sa.preference_match), pct(sb.preference_match))}
+          </tbody></table>
+          <h3 style="margin-top:16px">Gap per skill (target − you)</h3>
+          <table><thead><tr><th>Skill</th><th class="num">${esc(ca.name)}</th><th class="num">${esc(cb.name)}</th></tr></thead><tbody>
+            ${state.meta.skills.map((s, i) => {
+              const ga = ca.targets[s.id] - you[i], gb = cb.targets[s.id] - you[i];
+              const f = g => g > 0 ? `<span class="pill warn">+${g.toFixed(0)}</span>` : `<span class="pill accent">met</span>`;
+              return row(esc(s.label), f(ga), f(gb));
+            }).join("")}
+          </tbody></table>
+          <p class="small muted">Total gap: ${esc(ca.name)} ${state.meta.skills.reduce((t, s, i) => t + Math.max(0, ca.targets[s.id] - you[i]), 0).toFixed(0)} points ·
+            ${esc(cb.name)} ${state.meta.skills.reduce((t, s, i) => t + Math.max(0, cb.targets[s.id] - you[i]), 0).toFixed(0)} points.</p>
+        </div>
       </div>
-      <div class="card"><h3>Baseline (equal weights) vs GA-optimised weights</h3>
-        <table><thead><tr><th>Split</th><th class="num">Baseline NDCG@5</th><th class="num">Optimised NDCG@5</th><th class="num">Baseline P@5</th><th class="num">Optimised P@5</th></tr></thead><tbody>
-          ${["train", "holdout"].map(s => `<tr><td>${s === "holdout" ? "<b>Held-out (independent)</b>" : "Training"}</td>
-            <td class="num">${fmt(ev[s].baseline["ndcg@5"])}</td><td class="num">${fmt(ev[s].optimized["ndcg@5"])}</td>
-            <td class="num">${fmt(ev[s].baseline["precision@5"])}</td><td class="num">${fmt(ev[s].optimized["precision@5"])}</td></tr>`).join("")}
-        </tbody></table>
-        <p class="notice small" style="margin-top:12px">${esc(ga._note)} Only the held-out row is an independent check. The training row was optimised directly.</p>
-      </div>`}
-      <div class="card"><h3>Hybrid score</h3><p><code>${esc(a.score_formula)}</code>, where s is the centroid output of the career's Mamdani FIS and I is the rank-weighted interest match.</p></div>
+      <p class="notice small">Targets are model assumptions, not industry standards.</p>
     </div>`);
+    const go2 = () => go(`#/compare/${document.getElementById("ca").value}/${document.getElementById("cb").value}`);
+    document.getElementById("ca").onchange = go2;
+    document.getElementById("cb").onchange = go2;
+    chart("radar", { type: "radar", data: { labels: state.meta.skills.map(s => s.label), datasets: [
+        { label: "You", data: you, borderColor: COLORS.brand, backgroundColor: "rgba(61,78,216,.18)" },
+        { label: ca.name, data: state.meta.skills.map(s => ca.targets[s.id]), borderColor: COLORS.accent, backgroundColor: "rgba(15,157,138,.06)", borderDash: [6, 4] },
+        { label: cb.name, data: state.meta.skills.map(s => cb.targets[s.id]), borderColor: COLORS.rose, backgroundColor: "rgba(192,57,107,.06)", borderDash: [2, 3] }] },
+      options: { scales: { r: { min: 0, max: 100, ticks: { stepSize: 25 } } } } });
+  }
 
-    const mfX = a.fuzzy.curves.x;
-    chart("mf", { type: "line", data: { labels: mfX, datasets: SETS.map(s => ({ label: s, data: a.fuzzy.curves.y[s],
-        borderColor: COLORS[s.toLowerCase()], pointRadius: 0, borderWidth: 2 })) },
-      options: { scales: { x: { title: { display: true, text: "Input value (0–100)" }, ticks: { maxTicksLimit: 11 } }, y: { min: 0, max: 1.05, title: { display: true, text: "Membership μ" } } } } });
-    if (r) {
-      const keys = Object.keys(r.analysis.memberships);
-      chart("mu", { type: "bar", data: { labels: keys.map(label), datasets: SETS.map(s => ({ label: s,
-          data: keys.map(k => r.analysis.memberships[k][s]), backgroundColor: COLORS[s.toLowerCase()] })) },
-        options: { scales: { y: { min: 0, max: 1 } } } });
-      chart("agg", { type: "line", data: { labels: r.analysis.curve_universe, datasets: [
-          { label: "Aggregated output μ", data: top.aggregated_curve, borderColor: COLORS.brand, backgroundColor: "rgba(61,78,216,.2)", fill: true, pointRadius: 0 },
-          { label: `Centroid = ${top.fis_suitability.toFixed(1)}`, data: r.analysis.curve_universe.map(u => Math.abs(u - top.fis_suitability) < 1 ? 1 : null),
-            borderColor: COLORS.warn, backgroundColor: COLORS.warn, pointRadius: 4, showLine: false }] },
-        options: { scales: { x: { title: { display: true, text: "Suitability universe (0–100)" }, ticks: { maxTicksLimit: 11 } }, y: { min: 0, max: 1.05 } } } });
+  function reportPage() {
+    const r = state.result;
+    if (!r) return render(noResult());
+    const recs = r.recommendations;
+    render(`<div class="report">
+      <div class="row no-print" style="margin-bottom:16px">
+        <a href="#/results">← Back to results</a><span class="spacer"></span>
+        <button class="btn" id="print">Print / Save as PDF</button></div>
+      <p class="muted small no-print">In the print dialog, choose "Save as PDF" as the destination.</p>
+      <header class="report-head">
+        <div><h1 style="margin:0">Career Recommendation Report</h1>
+          <p class="muted" style="margin:.2rem 0 0">CareerCompass · Mamdani fuzzy inference + genetic algorithm</p></div>
+        <div class="small" style="text-align:right">${r.display_name ? `<b>${esc(r.display_name)}</b><br>` : ""}${esc(fmtDate(r.created_at || new Date().toISOString()))}</div>
+      </header>
+      <section><h2>Summary</h2><p>${esc(r.summary.text)}</p><p class="small muted">${r.summary.source === "groq" ? `AI-written by Groq (${esc(r.summary.model)}) from the computed scores.` : "Template summary generated from the computed scores."}</p></section>
+      <section><h2>Your inputs</h2>
+        <table><tbody>
+          ${state.meta.skills.map(s => `<tr><td>${esc(s.label)}</td><td class="num">${r.analysis.inputs[s.id]}</td></tr>`).join("")}
+          <tr><td>Interests (ranked)</td><td class="num">${(r.interests || r.input?.interests || []).map((i, k) => `${k + 1}. ${esc(interestLabel(i))}`).join(", ")}</td></tr>
+          <tr><td>Work preferences</td><td class="num">${prefText(r.work_preferences) || "not given"}</td></tr>
+        </tbody></table></section>
+      <section><h2>Top 5 careers</h2>
+        <table><thead><tr><th>#</th><th>Career</th><th class="num">Score</th><th>Fit</th><th class="num">Fuzzy s</th><th class="num">Interest</th><th class="num">Pref.</th></tr></thead><tbody>
+          ${recs.map(x => `<tr><td>${x.rank}</td><td>${esc(x.name)}</td><td class="num"><b>${x.score.toFixed(1)}</b></td><td>${bandPill(x.fit)}</td>
+            <td class="num">${x.fis_suitability.toFixed(1)}</td><td class="num">${(x.interest_match * 100).toFixed(0)}%</td>
+            <td class="num">${x.preference_match == null ? "—" : (x.preference_match * 100).toFixed(0) + "%"}</td></tr>`).join("")}
+        </tbody></table>
+        <p class="small muted">${esc(r.score_formula)}</p></section>
+      ${recs.slice(0, 3).map(x => `<section class="report-career"><h2>${x.rank}. ${esc(x.name)} ${bandPill(x.fit)}</h2>
+        <p>${esc(x.explanation)}</p>
+        <h3>Learning roadmap</h3>${roadmapHtml(x)}</section>`).join("")}
+      <section><h2>How this was computed</h2>
+        <p class="small">Each rating is fuzzified into Low, Medium and High. 18 Mamdani fuzzy systems (11 rules each) combine the memberships,
+          scaled by GA-optimised weights, into a suitability from Very Low to Very High, and centroid defuzzification gives s on 0–100.
+          The final score multiplies s by 0.65 + 0.25 × interest match + 0.10 × work-preference match, so it never exceeds s.</p></section>
+      <p class="notice small">${esc(r.disclaimer)}</p>
+    </div>`);
+    document.getElementById("print").onclick = () => window.print();
+  }
+
+  async function historyPage() {
+    const list = readHistory();
+    render(`<div class="stack">
+      <h1>History</h1>
+      <p class="muted">Past assessments saved in <b>this browser only</b> (latest ${HISTORY_MAX}). Nothing is stored on the server,
+        so another computer starts with an empty history.</p>
+      <div class="row no-print">
+        <button class="btn secondary" id="demo">Load demo history (5 profiles)</button>
+        <button class="btn secondary" id="export" ${list.length ? "" : "disabled"}>Export JSON</button>
+        <span class="spacer"></span>
+        <button class="btn ghost danger" id="clear" ${list.length ? "" : "disabled"}>Clear all</button>
+      </div>
+      <div id="hmsg"></div>
+      ${list.length ? `<div class="card table-wrap"><table class="history"><thead><tr><th>When</th><th>Name</th><th>Top career</th><th class="num">Score</th><th>Fit</th><th>Next two</th><th></th></tr></thead><tbody>
+        ${list.map(e => { const t = e.result.recommendations; return `<tr>
+          <td>${esc(fmtDate(e.at))}${e.tag ? ` <span class="pill">${esc(e.tag)}</span>` : ""}</td>
+          <td>${esc(e.result.display_name || "Anonymous")}</td>
+          <td><b>${esc(t[0].name)}</b></td><td class="num">${t[0].score.toFixed(1)}</td><td>${bandPill(t[0].fit)}</td>
+          <td class="small">${t.slice(1, 3).map(x => `${esc(x.name)} (${x.score.toFixed(0)})`).join(", ")}</td>
+          <td class="row" style="flex-wrap:nowrap"><button class="btn secondary" data-view="${e.id}">View</button>
+            <button class="btn ghost" data-del="${e.id}" aria-label="Delete">Delete</button></td></tr>`; }).join("")}
+      </tbody></table></div>
+      <div class="card"><h3>Top career across saved results</h3><div class="chart-box"><canvas id="hchart"></canvas></div></div>`
+      : `<div class="card"><p>No saved results yet. Take the assessment, or load the demo history to see how this page works.</p>
+          <a class="btn" href="#/instructions">Start Career Assessment</a></div>`}
+    </div>`);
+    document.getElementById("demo").onclick = loadDemoHistory;
+    document.getElementById("clear").onclick = () => { if (confirm("Delete every saved result in this browser?")) { writeHistory([]); historyPage(); } };
+    document.getElementById("export").onclick = () => {
+      const blob = new Blob([JSON.stringify(list, null, 1)], { type: "application/json" });
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "careercompass-history.json"; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    };
+    app.querySelectorAll("[data-view]").forEach(b => b.onclick = () => {
+      const e = list.find(x => x.id === b.dataset.view);
+      state.result = e.result; saveResult(e.result); go("#/results");
+    });
+    app.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { writeHistory(list.filter(x => x.id !== b.dataset.del)); historyPage(); });
+    if (list.length) {
+      const counts = {};
+      list.forEach(e => { const n = e.result.recommendations[0].name; counts[n] = (counts[n] || 0) + 1; });
+      const names = Object.keys(counts).sort((x, y) => counts[y] - counts[x]);
+      chart("hchart", { type: "bar", data: { labels: names, datasets: [{ label: "Times ranked #1", data: names.map(n => counts[n]), backgroundColor: COLORS.brand }] },
+        options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { ticks: { stepSize: 1 }, title: { display: true, text: "Saved results" } } } } });
     }
-    if (!ga.missing) {
-      chart("fit", { type: "line", data: { labels: ga.history.map(h => h.generation), datasets: [
-          { label: "Best fitness", data: ga.history.map(h => h.best), borderColor: COLORS.brand, pointRadius: 0 },
-          { label: "Average fitness", data: ga.history.map(h => h.average), borderColor: COLORS.accent, pointRadius: 0 }] },
-        options: { scales: { x: { title: { display: true, text: "Generation" } }, y: { title: { display: true, text: "NDCG@5 (train)" } } } } });
-      chart("wts", { type: "bar", data: { labels: a.skills, datasets: [
-          { label: "Baseline (equal)", data: ga.baseline_weights, backgroundColor: COLORS.grey },
-          { label: "Best in initial population", data: ga.initial_best_weights, backgroundColor: "#b9c0ff" },
-          { label: "GA-optimised", data: ga.optimized_weights, backgroundColor: COLORS.brand }] },
-        options: { scales: { y: { min: 0, title: { display: true, text: "Weight" } } } } });
+  }
+
+  async function loadDemoHistory() {
+    const msg = document.getElementById("hmsg");
+    msg.innerHTML = `<p class="notice info">Running the five demonstration profiles through the real engine…</p>`;
+    try {
+      const { profiles } = await api("/api/demo-profiles");
+      for (const p of profiles.slice().reverse()) {
+        const r = await runAssessment({ display_name: p.name, skills: p.skills, interests: p.interests, work_preferences: p.work_preferences });
+        addHistory(r, "demo");
+      }
+      historyPage();
+    } catch (e) {
+      msg.innerHTML = `<div class="error-box">Could not load the demo profiles: ${esc(e.message)}</div>`;
     }
   }
 
@@ -443,9 +607,11 @@
         This prototype uses fuzzy reasoning to handle imprecise self-ratings, and an evolutionary algorithm to tune how much each skill matters.</p>
       <h3>Objectives</h3>
       <ul><li>Represent gradual skill levels with fuzzy membership functions.</li><li>Evaluate career suitability with Mamdani IF–THEN rules.</li>
-        <li>Optimise the input weights with a Genetic Algorithm against a documented fitness function.</li><li>Give five ranked, explained recommendations with skill gaps.</li></ul>
+        <li>Optimise the input weights with a Genetic Algorithm against a documented fitness function, with a separate validation and test set.</li>
+        <li>Give five ranked, explained recommendations with fit bands, skill gaps and a learning roadmap.</li></ul>
       <h3>Technologies</h3>
-      <p>HTML5, CSS3, vanilla JavaScript and Chart.js for the frontend. Python, Flask and NumPy for the backend. The Fuzzy Logic and Genetic Algorithm are custom, documented implementations.</p>
+      <p>HTML5, CSS3, vanilla JavaScript and Chart.js for the frontend. Python, Flask and NumPy for the backend. The Fuzzy Logic and Genetic Algorithm are custom, documented implementations.
+        An optional LLM (Groq) only rewrites the computed results as a readable paragraph; it never scores anything.</p>
       <h3>Team members and responsibilities</h3>
       <table><tbody>
         <tr><td>Member 1</td><td>Fuzzy Logic module, rules, membership graphs</td></tr>
@@ -454,30 +620,35 @@
         <tr><td>Member 4</td><td>Frontend and integration</td></tr></tbody></table>
       <p class="muted small">Replace these with your team's names before submission.</p>
       <h3>Limitations</h3>
-      <ul><li>Skill ratings are self-reported and subjective.</li><li>Career target profiles are simplified model assumptions, not industry standards.</li>
-        <li>The GA was trained and evaluated on synthetic profiles labelled by our own expert function. The evaluation shows consistency with those assumptions, not real-world accuracy.</li>
-        <li>The interest match is used by both the model and the reference labels, which makes the agreement scores higher than they would otherwise be.</li>
-        <li>Work preferences are not scored. No data is stored on the server.</li>
+      <ul><li>Skill ratings are self-reported and subjective.</li><li>Career target and work profiles are simplified model assumptions, not industry standards.</li>
+        <li>The GA was trained and evaluated on 500 synthetic profiles labelled by our own expert function. The evaluation shows consistency with those assumptions, not real-world accuracy.</li>
+        <li>On the untouched test split, the GA weights did not beat equal weights by a statistically meaningful margin (see Soft Computing → Results).</li>
+        <li>History is stored only in this browser. No data is stored on the server.</li>
         <li>This tool does not replace professional career counselling.</li></ul>
       <h3>Future scope</h3>
-      <p>Validate the career profiles with real counsellors, collect voluntary and anonymised survey data for evaluation, add trapezoidal or tuned membership functions, and add optional result history.</p>
+      <p>Validate the career profiles with real counsellors, collect voluntary and anonymised survey data as a real test set, tune the membership functions with the GA as well, and add server-side history with consent.</p>
       <h3>References</h3>
       <ul class="small"><li>Zadeh, L. A. (1965). Fuzzy sets. <i>Information and Control</i>, 8(3), 338–353.</li>
         <li>Mamdani, E. H., &amp; Assilian, S. (1975). An experiment in linguistic synthesis with a fuzzy logic controller. <i>Int. J. Man-Machine Studies</i>, 7(1), 1–13.</li>
+        <li>Ruspini, E. H. (1969). A new approach to clustering. <i>Information and Control</i>, 15(1), 22–32 (fuzzy partitions).</li>
         <li>Holland, J. H. (1975). <i>Adaptation in Natural and Artificial Systems</i>. University of Michigan Press.</li>
         <li>Eshelman, L. J., &amp; Schaffer, J. D. (1993). Real-coded genetic algorithms and interval-schemata (BLX-α). <i>Foundations of Genetic Algorithms 2</i>.</li>
-        <li>Järvelin, K., &amp; Kekäläinen, J. (2002). Cumulated gain-based evaluation of IR techniques (NDCG). <i>ACM TOIS</i>, 20(4).</li></ul>
+        <li>Järvelin, K., &amp; Kekäläinen, J. (2002). Cumulated gain-based evaluation of IR techniques (NDCG). <i>ACM TOIS</i>, 20(4).</li>
+        <li>Efron, B., &amp; Tibshirani, R. (1993). <i>An Introduction to the Bootstrap</i>. Chapman &amp; Hall.</li></ul>
     </div>`);
   }
+
+  // ---------- shared with sc.js ----------
+  window.CC = { state, api, esc, chart, render, label, COLORS, SETS, OUT_SETS, ensureMeta, ensureAnalysis, bandPill };
 
   // ---------- router ----------
   function go(h) { location.hash = h; }
   async function route() {
-    const [, page = "", arg] = (location.hash || "#/").split("/");
+    const [, page = "", arg, arg2] = (location.hash || "#/").split("/");
     document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("active", a.getAttribute("href") === `#/${page}`));
     document.getElementById("nav").classList.remove("open");
     try {
-      if (["assess", "processing", "analysis", "career", "gap", "results"].includes(page)) await ensureMeta();
+      await ensureMeta();
       switch (page) {
         case "": return home();
         case "instructions": return instructions();
@@ -486,7 +657,10 @@
         case "results": return results();
         case "career": return careerPage(decodeURIComponent(arg || ""));
         case "gap": return gapPage(decodeURIComponent(arg || ""));
-        case "analysis": return analysisPage();
+        case "compare": return comparePage(decodeURIComponent(arg || ""), decodeURIComponent(arg2 || ""));
+        case "report": return reportPage();
+        case "history": return historyPage();
+        case "analysis": return window.CCPages.analysis(arg);
         case "about": return about();
         default: return render(`<div class="card"><h2>Page not found</h2><a href="#/">Go home</a></div>`);
       }

@@ -11,6 +11,110 @@
     "cloud": "Cloud and DevOps",
     "marketing": "Digital marketing and communication"
   },
+  "skill_roadmap": {
+   "programming": {
+    "foundation": [
+     "Variables, loops and functions in Python",
+     "Solve 30 beginner problems (HackerRank / Exercism)",
+     "Use Git for every exercise"
+    ],
+    "intermediate": [
+     "Object-oriented design and modules",
+     "Build a small CRUD app end to end",
+     "Write unit tests with pytest"
+    ],
+    "advanced": [
+     "Data structures and algorithm complexity",
+     "Contribute to an open-source project",
+     "Code review and refactoring practice"
+    ]
+   },
+   "mathematics": {
+    "foundation": [
+     "School algebra and functions refresh",
+     "Basic statistics: mean, median, spread",
+     "Khan Academy algebra track"
+    ],
+    "intermediate": [
+     "Probability and distributions",
+     "Linear algebra: vectors and matrices",
+     "Discrete mathematics for computing"
+    ],
+    "advanced": [
+     "Calculus for optimisation (gradients)",
+     "Statistical inference and hypothesis tests",
+     "Apply maths in a modelling project"
+    ]
+   },
+   "problem_solving": {
+    "foundation": [
+     "Break problems into steps with flowcharts",
+     "Daily logic puzzles",
+     "Explain your reasoning aloud (rubber-duck)"
+    ],
+    "intermediate": [
+     "Timed problem sets (LeetCode easy/medium)",
+     "Root-cause analysis on real bugs",
+     "Case-study practice"
+    ],
+    "advanced": [
+     "System-design style open problems",
+     "Competitive programming or hackathons",
+     "Mentor others through problems"
+    ]
+   },
+   "creativity": {
+    "foundation": [
+     "Sketch three ideas before choosing one",
+     "Study good design examples (Dribbble, Behance)",
+     "Basic colour and layout principles"
+    ],
+    "intermediate": [
+     "Design-thinking workshop exercises",
+     "Redesign an existing app screen",
+     "Build a small portfolio piece monthly"
+    ],
+    "advanced": [
+     "Lead an ideation session",
+     "Original portfolio case studies",
+     "Cross-discipline side projects"
+    ]
+   },
+   "communication": {
+    "foundation": [
+     "Write a one-page summary of each project",
+     "Practise 2-minute presentations",
+     "Active listening exercises"
+    ],
+    "intermediate": [
+     "Technical writing: README and docs",
+     "Present to a class or club",
+     "Join group projects in a lead role"
+    ],
+    "advanced": [
+     "Stakeholder interviews and requirement gathering",
+     "Public talks or meetups",
+     "Negotiation and conflict resolution"
+    ]
+   },
+   "technical_interest": {
+    "foundation": [
+     "Follow one tech newsletter weekly",
+     "Install Linux in a VM and explore",
+     "Watch intro courses for three tech fields"
+    ],
+    "intermediate": [
+     "Hands-on labs (cloud free tier, home network)",
+     "Build a weekend project with a new tool",
+     "Join a tech community or club"
+    ],
+    "advanced": [
+     "Earn an entry certification in your field",
+     "Deep-dive project in one specialisation",
+     "Write about what you learn"
+    ]
+   }
+  },
   "careers": [
     {
       "id": "software_developer", "name": "Software Developer",
@@ -21,7 +125,8 @@
       "responsibilities": ["Translate requirements into working code", "Write tests and review code", "Debug and maintain existing systems"],
       "key_skills": ["A general-purpose language (Python, Java or C#)", "Data structures and algorithms", "Git and code review", "Testing"],
       "learning": ["Data structures and algorithms practice", "One backend framework in depth", "Unit testing and clean code", "Build and publish two small projects"],
-      "related": ["web_developer", "mobile_developer", "qa_engineer"]
+      "related": ["web_developer", "mobile_developer", "qa_engineer"],
+      "work_profile": {"work_type": ["technical", "analytical"], "environment": "mixed", "activity": ["building"], "math_demand": "medium"}
     },
     {
       "id": "web_developer", "name": "Web Developer",
@@ -32,7 +137,8 @@
       "responsibilities": ["Build responsive pages and components", "Connect front ends to APIs", "Optimise performance and accessibility"],
       "key_skills": ["HTML, CSS, JavaScript", "A front-end framework", "HTTP and REST APIs", "Accessibility basics"],
       "learning": ["Modern JavaScript", "Responsive CSS layout", "One framework such as React or Vue", "Basic backend with Flask or Node"],
-      "related": ["software_developer", "uiux_designer", "mobile_developer"]
+      "related": ["software_developer", "uiux_designer", "mobile_developer"],
+      "work_profile": {"work_type": ["technical", "creative"], "environment": "mixed", "activity": ["building", "designing"], "math_demand": "low"}
     },
     {
       "id": "mobile_developer", "name": "Mobile Application Developer",
@@ -43,7 +149,8 @@
       "responsibilities": ["Build mobile screens and app logic", "Integrate device features and APIs", "Publish and maintain apps"],
       "key_skills": ["Kotlin or Swift, or Flutter", "Mobile UI patterns", "REST APIs", "App lifecycle"],
       "learning": ["Kotlin or Flutter fundamentals", "Mobile UI design guidelines", "Local storage and networking", "Publish a sample app"],
-      "related": ["software_developer", "web_developer", "uiux_designer"]
+      "related": ["software_developer", "web_developer", "uiux_designer"],
+      "work_profile": {"work_type": ["technical", "creative"], "environment": "mixed", "activity": ["building", "designing"], "math_demand": "medium"}
     },
     {
       "id": "data_analyst", "name": "Data Analyst",
@@ -54,7 +161,8 @@
       "responsibilities": ["Clean and prepare datasets", "Build reports and dashboards", "Present findings to stakeholders"],
       "key_skills": ["SQL", "Spreadsheets", "Descriptive statistics", "A visualisation tool"],
       "learning": ["SQL queries and joins", "Statistics fundamentals", "Pandas for data cleaning", "Dashboard design"],
-      "related": ["data_scientist", "business_analyst", "database_administrator"]
+      "related": ["data_scientist", "business_analyst", "database_administrator"],
+      "work_profile": {"work_type": ["analytical"], "environment": "mixed", "activity": ["analysing"], "math_demand": "medium"}
     },
     {
       "id": "data_scientist", "name": "Data Scientist",
@@ -65,7 +173,8 @@
       "responsibilities": ["Frame questions as modelling problems", "Train and evaluate models", "Communicate model results and limits"],
       "key_skills": ["Python and Pandas", "Probability and statistics", "Machine learning basics", "Experiment design"],
       "learning": ["Probability and statistics", "Linear algebra basics", "scikit-learn", "An end-to-end data project"],
-      "related": ["data_analyst", "ai_ml_engineer", "business_analyst"]
+      "related": ["data_analyst", "ai_ml_engineer", "business_analyst"],
+      "work_profile": {"work_type": ["analytical", "technical"], "environment": "independent", "activity": ["researching", "analysing"], "math_demand": "high"}
     },
     {
       "id": "ai_ml_engineer", "name": "AI/ML Engineer",
@@ -76,7 +185,8 @@
       "responsibilities": ["Implement and train models", "Build data and model pipelines", "Deploy and monitor models"],
       "key_skills": ["Python", "Linear algebra and calculus", "Deep learning frameworks", "MLOps basics"],
       "learning": ["Linear algebra and calculus refresh", "Neural networks with PyTorch", "Model evaluation", "Deploying a model as an API"],
-      "related": ["data_scientist", "software_developer", "cloud_engineer"]
+      "related": ["data_scientist", "software_developer", "cloud_engineer"],
+      "work_profile": {"work_type": ["technical", "analytical"], "environment": "independent", "activity": ["researching", "building"], "math_demand": "high"}
     },
     {
       "id": "cybersecurity_analyst", "name": "Cybersecurity Analyst",
@@ -87,7 +197,8 @@
       "responsibilities": ["Monitor alerts and logs", "Investigate incidents", "Assess and reduce vulnerabilities"],
       "key_skills": ["Networking fundamentals", "Operating systems and Linux", "Security tools", "Scripting"],
       "learning": ["Networking (TCP/IP)", "Linux command line", "OWASP Top 10", "Legal practice labs and CTFs"],
-      "related": ["network_engineer", "cloud_engineer", "it_support"]
+      "related": ["network_engineer", "cloud_engineer", "it_support"],
+      "work_profile": {"work_type": ["technical", "analytical"], "environment": "independent", "activity": ["analysing", "researching"], "math_demand": "medium"}
     },
     {
       "id": "cloud_engineer", "name": "Cloud Engineer",
@@ -98,7 +209,8 @@
       "responsibilities": ["Provision and manage cloud resources", "Automate infrastructure", "Control cost and reliability"],
       "key_skills": ["A cloud platform", "Linux", "Infrastructure as code", "Networking basics"],
       "learning": ["One cloud platform's fundamentals", "Linux administration", "Terraform basics", "Containers with Docker"],
-      "related": ["devops_engineer", "network_engineer", "ai_ml_engineer"]
+      "related": ["devops_engineer", "network_engineer", "ai_ml_engineer"],
+      "work_profile": {"work_type": ["technical"], "environment": "mixed", "activity": ["building", "supporting"], "math_demand": "low"}
     },
     {
       "id": "devops_engineer", "name": "DevOps Engineer",
@@ -109,7 +221,8 @@
       "responsibilities": ["Build CI/CD pipelines", "Manage containers and deployments", "Work with developers on reliability"],
       "key_skills": ["Scripting", "CI/CD tools", "Docker and Kubernetes", "Monitoring"],
       "learning": ["Bash and Python scripting", "Git-based CI pipelines", "Docker and Kubernetes", "Monitoring and logging"],
-      "related": ["cloud_engineer", "software_developer", "qa_engineer"]
+      "related": ["cloud_engineer", "software_developer", "qa_engineer"],
+      "work_profile": {"work_type": ["technical"], "environment": "collaborative", "activity": ["building", "supporting"], "math_demand": "low"}
     },
     {
       "id": "database_administrator", "name": "Database Administrator",
@@ -120,7 +233,8 @@
       "responsibilities": ["Design schemas and indexes", "Back up and restore data", "Tune query performance"],
       "key_skills": ["SQL", "Relational database design", "Backup and recovery", "Performance tuning"],
       "learning": ["Advanced SQL", "Normalisation and indexing", "PostgreSQL or MySQL administration", "Backup strategies"],
-      "related": ["data_analyst", "cloud_engineer", "software_developer"]
+      "related": ["data_analyst", "cloud_engineer", "software_developer"],
+      "work_profile": {"work_type": ["technical", "analytical"], "environment": "independent", "activity": ["supporting", "analysing"], "math_demand": "medium"}
     },
     {
       "id": "network_engineer", "name": "Network Engineer",
@@ -131,7 +245,8 @@
       "responsibilities": ["Configure routers, switches and firewalls", "Troubleshoot connectivity", "Plan network capacity"],
       "key_skills": ["TCP/IP and subnetting", "Routing and switching", "Firewalls", "Network monitoring"],
       "learning": ["Subnetting practice", "Routing and switching labs", "Network security basics", "A networking certification syllabus"],
-      "related": ["cybersecurity_analyst", "cloud_engineer", "it_support"]
+      "related": ["cybersecurity_analyst", "cloud_engineer", "it_support"],
+      "work_profile": {"work_type": ["technical"], "environment": "mixed", "activity": ["building", "supporting"], "math_demand": "low"}
     },
     {
       "id": "uiux_designer", "name": "UI/UX Designer",
@@ -142,7 +257,8 @@
       "responsibilities": ["Run user research", "Create wireframes and prototypes", "Test designs with users"],
       "key_skills": ["Figma or a similar tool", "User research", "Visual design basics", "Prototyping"],
       "learning": ["Design principles and typography", "Figma prototyping", "Usability testing", "A case-study portfolio"],
-      "related": ["product_designer", "web_developer", "digital_marketing"]
+      "related": ["product_designer", "web_developer", "digital_marketing"],
+      "work_profile": {"work_type": ["creative", "people"], "environment": "collaborative", "activity": ["designing", "researching"], "math_demand": "low"}
     },
     {
       "id": "business_analyst", "name": "Business Analyst",
@@ -153,7 +269,8 @@
       "responsibilities": ["Gather and document requirements", "Analyse processes and data", "Present recommendations"],
       "key_skills": ["Requirements writing", "Process modelling", "Spreadsheets and SQL basics", "Stakeholder communication"],
       "learning": ["Requirements and user stories", "Process modelling (BPMN)", "Excel and SQL basics", "Presentation skills"],
-      "related": ["project_manager", "data_analyst", "product_designer"]
+      "related": ["project_manager", "data_analyst", "product_designer"],
+      "work_profile": {"work_type": ["analytical", "people"], "environment": "collaborative", "activity": ["analysing", "managing"], "math_demand": "medium"}
     },
     {
       "id": "project_manager", "name": "Project Manager",
@@ -164,7 +281,8 @@
       "responsibilities": ["Plan scope, schedule and resources", "Coordinate the team", "Track risks and report progress"],
       "key_skills": ["Planning and scheduling", "Agile and Scrum", "Risk management", "Team communication"],
       "learning": ["Agile and Scrum basics", "Project planning tools", "Risk and stakeholder management", "Run a small team project"],
-      "related": ["business_analyst", "qa_engineer", "digital_marketing"]
+      "related": ["business_analyst", "qa_engineer", "digital_marketing"],
+      "work_profile": {"work_type": ["people"], "environment": "collaborative", "activity": ["managing"], "math_demand": "low"}
     },
     {
       "id": "qa_engineer", "name": "QA / Software Test Engineer",
@@ -175,7 +293,8 @@
       "responsibilities": ["Design test cases", "Automate regression tests", "Report and track defects"],
       "key_skills": ["Test design techniques", "Test automation", "Bug reporting", "Basic programming"],
       "learning": ["Testing fundamentals", "Selenium or Playwright", "API testing", "Writing clear bug reports"],
-      "related": ["software_developer", "devops_engineer", "project_manager"]
+      "related": ["software_developer", "devops_engineer", "project_manager"],
+      "work_profile": {"work_type": ["technical", "analytical"], "environment": "mixed", "activity": ["analysing", "building"], "math_demand": "low"}
     },
     {
       "id": "digital_marketing", "name": "Digital Marketing Specialist",
@@ -186,7 +305,8 @@
       "responsibilities": ["Create campaign content", "Manage social and search channels", "Measure and report campaign results"],
       "key_skills": ["Content writing", "SEO and social media", "Web analytics", "Campaign planning"],
       "learning": ["SEO basics", "Social media strategy", "Web analytics", "Run a small campaign"],
-      "related": ["uiux_designer", "business_analyst", "project_manager"]
+      "related": ["uiux_designer", "business_analyst", "project_manager"],
+      "work_profile": {"work_type": ["creative", "people"], "environment": "collaborative", "activity": ["designing", "analysing"], "math_demand": "low"}
     },
     {
       "id": "product_designer", "name": "Product Designer",
@@ -197,7 +317,8 @@
       "responsibilities": ["Define product problems with the team", "Design flows and interfaces", "Validate ideas with users"],
       "key_skills": ["Interaction design", "Prototyping", "User research", "Product thinking"],
       "learning": ["Design thinking", "Interaction design patterns", "Product metrics basics", "End-to-end design case studies"],
-      "related": ["uiux_designer", "business_analyst", "web_developer"]
+      "related": ["uiux_designer", "business_analyst", "web_developer"],
+      "work_profile": {"work_type": ["creative", "analytical"], "environment": "collaborative", "activity": ["designing", "researching"], "math_demand": "low"}
     },
     {
       "id": "it_support", "name": "IT Support Specialist",
@@ -208,7 +329,8 @@
       "responsibilities": ["Respond to support tickets", "Set up devices and accounts", "Document fixes"],
       "key_skills": ["Operating systems", "Troubleshooting", "Networking basics", "Customer communication"],
       "learning": ["Windows and Linux basics", "Networking fundamentals", "Ticketing and documentation", "An entry-level IT certification syllabus"],
-      "related": ["network_engineer", "cybersecurity_analyst", "cloud_engineer"]
+      "related": ["network_engineer", "cybersecurity_analyst", "cloud_engineer"],
+      "work_profile": {"work_type": ["people", "technical"], "environment": "collaborative", "activity": ["supporting"], "math_demand": "low"}
     }
   ]
 }

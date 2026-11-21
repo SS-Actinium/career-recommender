@@ -12,11 +12,14 @@ from engine.data import DATA_DIR, SKILLS
 
 DEMO_PROFILES: dict[str, dict] = {
     "Technology-oriented": {
-        "skills": [88, 60, 85, 45, 50, 92], "interests": ["software", "cloud"]},
+        "skills": [88, 60, 85, 45, 50, 92], "interests": ["software", "cloud"],
+        "work_preferences": {"work_type": "technical", "activity": "building"}},
     "Mathematics and data-oriented": {
-        "skills": [60, 90, 82, 40, 60, 70], "interests": ["data", "ai"]},
+        "skills": [60, 90, 82, 40, 60, 70], "interests": ["data", "ai"],
+        "work_preferences": {"work_type": "analytical", "advanced_math": "high"}},
     "Creative and design-oriented": {
-        "skills": [35, 35, 70, 92, 75, 55], "interests": ["design"]},
+        "skills": [35, 35, 70, 92, 75, 55], "interests": ["design"],
+        "work_preferences": {"work_type": "creative", "environment": "collaborative"}},
     "Communication and business-oriented": {
         "skills": [25, 60, 72, 55, 90, 45], "interests": ["business", "marketing"]},
     "Balanced with mixed interests": {
@@ -34,12 +37,14 @@ def main() -> None:
 
     w = load_weights()
     for name, p in DEMO_PROFILES.items():
-        student = {"skills": dict(zip(SKILLS, p["skills"])), "interests": p["interests"]}
+        student = {"skills": dict(zip(SKILLS, p["skills"])), "interests": p["interests"],
+                   "work_preferences": p.get("work_preferences", {})}
         out = recommend(student, w)
         print(f"\n{name}  skills={p['skills']}  interests={p['interests']}")
         for r in out["recommendations"]:
-            print(f"  {r['rank']}. {r['name']:<30s} score={r['score']:5.1f}  "
-                  f"FIS={r['fis_suitability']:5.1f}  I={r['interest_match']:.2f}")
+            pm = "  -" if r["preference_match"] is None else f"{r['preference_match']:.2f}"
+            print(f"  {r['rank']}. {r['name']:<30s} score={r['score']:5.1f} ({r['fit']['label']})  "
+                  f"FIS={r['fis_suitability']:5.1f}  I={r['interest_match']:.2f}  W={pm}")
 
 
 if __name__ == "__main__":

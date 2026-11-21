@@ -4,7 +4,10 @@ Chromosome: six non-negative weights that sum to 1.
 Operators: tournament selection (k=3), blend crossover BLX-α (α=0.5, p=0.8),
 Gaussian mutation (σ=0.05, p=0.2 per child), elitism (1), and repair
 (clip to ≥0, then normalise).
-Fitness: mean NDCG@5 against the synthetic reference rankings.
+Fitness: mean NDCG@5 against the synthetic reference rankings (training split).
+Model selection (v2): after every generation the best training chromosome is scored
+on the validation split; the chromosome with the best validation NDCG@5 is kept, and
+the run stops early when validation has not improved for `patience` generations.
 """
 from __future__ import annotations
 
@@ -13,6 +16,7 @@ from typing import Callable
 
 import numpy as np
 
+from .interest import interest_match_batch
 from .recommender import top_k_batch
 
 N_GENES = 6
@@ -23,7 +27,7 @@ _IDEAL_DCG = float(np.dot([5, 4, 3, 2, 1], _DISCOUNT))
 @dataclass
 class GAConfig:
     population: int = 30
-    generations: int = 40
+    generations: int = 60
     crossover_prob: float = 0.8
     blend_alpha: float = 0.5
     mutation_prob: float = 0.2
@@ -32,6 +36,7 @@ class GAConfig:
     elitism: int = 1
     seed: int = 42
     seed_equal_weights: bool = True
+    patience: int = 15  # early stopping on validation; 0 disables
 
 
 @dataclass
@@ -42,6 +47,10 @@ class GAResult:
     initial_best_fitness: float
     history: list[dict[str, float]] = field(default_factory=list)
     config: dict = field(default_factory=dict)
+    selected_weights: list[float] = field(default_factory=list)  # best on validation (or best train if no val_fn)
+    selected_generation: int = 0
+    selected_val_fitness: float | None = None
+    stopped_early: bool = False
 
 
 def normalize(w: np.ndarray) -> np.ndarray:
@@ -62,17 +71,22 @@ def precision_at_5(model_top: list[int] | np.ndarray, reference_top: list[int]) 
     return len(set(map(int, model_top[:5])) & set(reference_top)) / 5.0
 
 
+def per_profile(weights: np.ndarray, X: np.ndarray, selections: list[list[str]],
+                references: list[list[int]]) -> dict[str, np.ndarray]:
+    """Per-profile NDCG@5 and P@5 arrays (used for bootstrap confidence intervals)."""
+    tops = top_k_batch(X, selections, np.asarray(weights, dtype=float))
+    return {"ndcg@5": np.array([ndcg_at_5(t, r) for t, r in zip(tops, references)]),
+            "precision@5": np.array([precision_at_5(t, r) for t, r in zip(tops, references)])}
+
+
 def evaluate(weights: np.ndarray, X: np.ndarray, selections: list[list[str]],
              references: list[list[int]]) -> dict[str, float]:
-    tops = top_k_batch(X, selections, np.asarray(weights, dtype=float))
-    return {
-        "ndcg@5": float(np.mean([ndcg_at_5(t, r) for t, r in zip(tops, references)])),
-        "precision@5": float(np.mean([precision_at_5(t, r) for t, r in zip(tops, references)])),
-    }
+    return {k: float(v.mean()) for k, v in per_profile(weights, X, selections, references).items()}
 
 
 def make_fitness(X: np.ndarray, selections: list[list[str]], references: list[list[int]]) -> Callable[[np.ndarray], float]:
-    return lambda w: evaluate(w, X, selections, references)["ndcg@5"]
+    interest = interest_match_batch(selections)  # constant across chromosomes, so compute once
+    return lambda w: evaluate(w, X, interest, references)["ndcg@5"]
 
 
 def tournament(rng: np.random.Generator, fitness: np.ndarray, k: int) -> int:
@@ -93,7 +107,8 @@ def gaussian_mutation(rng: np.random.Generator, w: np.ndarray, sigma: float) -> 
 
 
 def run_ga(fitness_fn: Callable[[np.ndarray], float], cfg: GAConfig | None = None,
-           on_generation: Callable[[int, float, float], None] | None = None) -> GAResult:
+           on_generation: Callable[[int, float, float], None] | None = None,
+           val_fn: Callable[[np.ndarray], float] | None = None) -> GAResult:
     cfg = cfg or GAConfig()
     rng = np.random.default_rng(cfg.seed)
     pop = normalize(rng.dirichlet(np.ones(N_GENES), size=cfg.population))
@@ -104,7 +119,20 @@ def run_ga(fitness_fn: Callable[[np.ndarray], float], cfg: GAConfig | None = Non
     result = GAResult(best_weights=[], best_fitness=0.0,
                       initial_best_weights=pop[init_best].tolist(),
                       initial_best_fitness=float(fit[init_best]), config=asdict(cfg))
-    result.history.append({"generation": 0, "best": float(fit.max()), "average": float(fit.mean())})
+    def track(gen: int) -> bool:
+        """Record history; return True when early stopping should trigger."""
+        b = int(np.argmax(fit))
+        row = {"generation": gen, "best": float(fit[b]), "average": float(fit.mean())}
+        if val_fn is not None:
+            v = float(val_fn(pop[b]))
+            row["val"] = v
+            if result.selected_val_fitness is None or v > result.selected_val_fitness + 1e-12:
+                result.selected_val_fitness, result.selected_generation = v, gen
+                result.selected_weights = pop[b].tolist()
+        result.history.append(row)
+        return bool(val_fn and cfg.patience and gen - result.selected_generation >= cfg.patience)
+
+    track(0)
 
     for gen in range(1, cfg.generations + 1):
         elite_idx = np.argsort(-fit)[:cfg.elitism]
@@ -124,11 +152,16 @@ def run_ga(fitness_fn: Callable[[np.ndarray], float], cfg: GAConfig | None = Non
         pop = np.array(children)
         # Elites keep their known fitness; only the new children are evaluated.
         fit = np.array([fit[elite_idx[i]] if i < cfg.elitism else fitness_fn(w) for i, w in enumerate(pop)])
-        result.history.append({"generation": gen, "best": float(fit.max()), "average": float(fit.mean())})
+        stop = track(gen)
         if on_generation:
             on_generation(gen, float(fit.max()), float(fit.mean()))
+        if stop:
+            result.stopped_early = True
+            break
 
     best = int(np.argmax(fit))
     result.best_weights = pop[best].tolist()
     result.best_fitness = float(fit[best])
+    if val_fn is None:
+        result.selected_weights, result.selected_generation = result.best_weights, result.history[-1]["generation"]
     return result

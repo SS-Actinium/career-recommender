@@ -19,30 +19,51 @@ class ValidationError(ValueError):
         self.errors = errors
 
 
+def _skills(skills_in: Any, errors: dict[str, str]) -> dict[str, float]:
+    skills: dict[str, float] = {}
+    if not isinstance(skills_in, dict):
+        errors["skills"] = "Skills are required."
+        return skills
+    for s in SKILLS:
+        v = skills_in.get(s)
+        if v is None:
+            errors[f"skills.{s}"] = "This rating is required."
+        elif isinstance(v, bool) or not isinstance(v, (int, float)):
+            errors[f"skills.{s}"] = "Rating must be a number."
+        elif not 0 <= v <= 100 or v != v:
+            errors[f"skills.{s}"] = "Rating must be between 0 and 100."
+        else:
+            skills[s] = float(v)
+    extra = set(skills_in) - set(SKILLS)
+    if extra:
+        errors["skills"] = f"Unknown skills: {', '.join(sorted(map(str, extra)))[:200]}."
+    return skills
+
+
+def validate_playground(payload: Any, career_ids: list[str]) -> dict[str, Any]:
+    """Skills plus one career id and a weight mode, for the live playground."""
+    if not isinstance(payload, dict):
+        raise ValidationError({"body": "Request body must be a JSON object."})
+    errors: dict[str, str] = {}
+    skills = _skills(payload.get("skills"), errors)
+    career = payload.get("career_id")
+    if career not in career_ids:
+        errors["career_id"] = "Unknown career."
+    mode = payload.get("weights", "optimized")
+    if mode not in ("optimized", "equal"):
+        errors["weights"] = "Weights must be 'optimized' or 'equal'."
+    if errors:
+        raise ValidationError(errors)
+    return {"skills": skills, "career_id": career, "weights": mode}
+
+
 def validate_assessment(payload: Any) -> dict[str, Any]:
     """Return a clean student dict, or raise ValidationError with per-field messages."""
     if not isinstance(payload, dict):
         raise ValidationError({"body": "Request body must be a JSON object."})
     errors: dict[str, str] = {}
 
-    skills_in = payload.get("skills")
-    skills: dict[str, float] = {}
-    if not isinstance(skills_in, dict):
-        errors["skills"] = "Skills are required."
-    else:
-        for s in SKILLS:
-            v = skills_in.get(s)
-            if v is None:
-                errors[f"skills.{s}"] = "This rating is required."
-            elif isinstance(v, bool) or not isinstance(v, (int, float)):
-                errors[f"skills.{s}"] = "Rating must be a number."
-            elif not 0 <= v <= 100 or v != v:
-                errors[f"skills.{s}"] = "Rating must be between 0 and 100."
-            else:
-                skills[s] = float(v)
-        extra = set(skills_in) - set(SKILLS)
-        if extra:
-            errors["skills"] = f"Unknown skills: {', '.join(sorted(map(str, extra)))[:200]}."
+    skills = _skills(payload.get("skills"), errors)
 
     sel = payload.get("interests", [])
     valid_tags = set(interests())

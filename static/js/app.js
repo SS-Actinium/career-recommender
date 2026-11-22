@@ -8,9 +8,11 @@
   const charts = [];
   const SETS = ["Low", "Medium", "High"];
   const OUT_SETS = ["Very Low", "Low", "Medium", "High", "Very High"];
-  const COLORS = { brand: "#3d4ed8", accent: "#0f9d8a", warn: "#d97706", grey: "#9aa1b2", rose: "#c0396b",
-                   low: "#d97706", medium: "#3d4ed8", high: "#0f9d8a",
-                   out: ["#b91c1c", "#d97706", "#3d4ed8", "#0f9d8a", "#7c3aed"] };
+  const COLORS = {
+    brand: "#3d4ed8", accent: "#0f9d8a", warn: "#d97706", grey: "#9aa1b2", rose: "#c0396b",
+    low: "#d97706", medium: "#3d4ed8", high: "#0f9d8a",
+    out: ["#b91c1c", "#d97706", "#3d4ed8", "#0f9d8a", "#7c3aed"]
+  };
   const HISTORY_KEY = "cc_history_v2";
   const HISTORY_MAX = 30;
 
@@ -74,7 +76,7 @@
   }
   function writeHistory(list) {
     let items = list.slice(0, HISTORY_MAX);
-    for (;;) {  // shrink if the browser quota is hit
+    for (; ;) {  // shrink if the browser quota is hit
       try { localStorage.setItem(HISTORY_KEY, JSON.stringify(items)); return true; } catch {
         if (items.length <= 1) return false;
         items = items.slice(0, -1);
@@ -82,8 +84,10 @@
     }
   }
   function addHistory(result, tag) {
-    const entry = { id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, at: new Date().toISOString(),
-                    tag: tag || null, result };
+    const entry = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, at: new Date().toISOString(),
+      tag: tag || null, result
+    };
     writeHistory([entry, ...readHistory()]);
     return entry;
   }
@@ -152,8 +156,10 @@
   }
 
   const STEP_TITLES = ["Profile", "Skill ratings", "Interests", "Work preferences", "Review"];
-  const PREF_NAMES = { work_type: "Preferred work type", environment: "Preferred environment", activity: "Preferred activity",
-                       advanced_math: "Willingness to learn advanced mathematics" };
+  const PREF_NAMES = {
+    work_type: "Preferred work type", environment: "Preferred environment", activity: "Preferred activity",
+    advanced_math: "Willingness to learn advanced mathematics"
+  };
 
   function assess() {
     const f = state.form, m = state.meta, step = state.step;
@@ -250,8 +256,10 @@
 
   function payloadFromForm() {
     const f = state.form;
-    return { display_name: f.display_name, skills: { ...f.skills }, interests: [...f.interests],
-             work_preferences: Object.fromEntries(Object.entries(f.work_preferences).filter(([, v]) => v)) };
+    return {
+      display_name: f.display_name, skills: { ...f.skills }, interests: [...f.interests],
+      work_preferences: Object.fromEntries(Object.entries(f.work_preferences).filter(([, v]) => v))
+    };
   }
 
   async function runAssessment(payload) {
@@ -327,11 +335,12 @@
         <div class="card"><h3>All 18 careers</h3><div class="chart-box"><canvas id="all"></canvas></div></div>
       </div>
       ${prefs ? `<p class="notice info"><b>Your work preferences</b> (10% of the score multiplier): ${prefs}</p>`
-              : `<p class="notice info">No work preferences were given, so the score uses skills and interests only.</p>`}
+        : `<p class="notice info">No work preferences were given, so the score uses skills and interests only.</p>`}
       <div class="stack" style="margin-top:16px">${recs.map(card).join("")}</div>
       <div class="row no-print" style="margin-top:24px">
         <a class="btn" href="#/report">Download PDF report</a>
-        <a class="btn secondary" href="#/compare/${recs[0].id}/${recs[1].id}">Compare careers</a>
+        <a class="btn secondary" href="#/compare/${recs.slice(0, 3).map(x => x.id).join("/")}">Compare top 3 careers</a>
+        <a class="btn secondary" href="#/people/current">Compare with another person</a>
         <a class="btn secondary" href="#/analysis">Soft Computing analysis</a>
         <a class="btn secondary" href="#/history">History</a>
         <a class="btn ghost" href="#/assess">Retake assessment</a>
@@ -341,12 +350,20 @@
       { label: "Base (s × 0.65)", data: recs.map(x => x.breakdown.fis_points), backgroundColor: COLORS.brand },
       { label: "Interest part", data: recs.map(x => x.breakdown.interest_points), backgroundColor: COLORS.accent }];
     if (hasPrefs) ds.push({ label: "Preference part", data: recs.map(x => x.breakdown.preference_points), backgroundColor: COLORS.warn });
-    chart("cmp", { type: "bar", data: { labels: recs.map(x => x.name), datasets: ds },
-      options: { indexAxis: "y", scales: { x: { stacked: true, min: 0, max: 100, title: { display: true, text: "Points (0–100)" } }, y: { stacked: true } } } });
+    chart("cmp", {
+      type: "bar", data: { labels: recs.map(x => x.name), datasets: ds },
+      options: { indexAxis: "y", scales: { x: { stacked: true, min: 0, max: 100, title: { display: true, text: "Points (0–100)" } }, y: { stacked: true } } }
+    });
     const bandColor = { strong: COLORS.accent, good: COLORS.brand, moderate: COLORS.warn, weak: COLORS.grey };
-    chart("all", { type: "bar", data: { labels: r.all_scores.map(x => x.name), datasets: [{ label: "Score",
-        data: r.all_scores.map(x => x.score), backgroundColor: r.all_scores.map(x => bandColor[x.fit.key]) }] },
-      options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { min: 0, max: 100 }, y: { ticks: { font: { size: 10 } } } } } });
+    chart("all", {
+      type: "bar", data: {
+        labels: r.all_scores.map(x => x.name), datasets: [{
+          label: "Score",
+          data: r.all_scores.map(x => x.score), backgroundColor: r.all_scores.map(x => bandColor[x.fit.key])
+        }]
+      },
+      options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { min: 0, max: 100 }, y: { ticks: { font: { size: 10 } } } } }
+    });
     loadSummary(r);
   }
 
@@ -436,65 +453,159 @@
           <div><h3>Career-specific topics</h3><ul>${rec.learning.map(l => `<li>${esc(l)}</li>`).join("")}</ul></div>
         </div>
       </div></div>`);
-    chart("gap", { type: "radar", data: { labels: rec.skills.map(s => s.label), datasets: [
-        { label: "You", data: rec.skills.map(s => s.student), borderColor: COLORS.brand, backgroundColor: "rgba(61,78,216,.15)" },
-        { label: "Career target", data: rec.skills.map(s => s.target), borderColor: COLORS.warn, backgroundColor: "rgba(217,119,6,.10)", borderDash: [5, 4] }] },
-      options: { scales: { r: { min: 0, max: 100, ticks: { stepSize: 25 } } } } });
+    chart("gap", {
+      type: "radar", data: {
+        labels: rec.skills.map(s => s.label), datasets: [
+          { label: "You", data: rec.skills.map(s => s.student), borderColor: COLORS.brand, backgroundColor: "rgba(61,78,216,.15)" },
+          { label: "Career target", data: rec.skills.map(s => s.target), borderColor: COLORS.warn, backgroundColor: "rgba(217,119,6,.10)", borderDash: [5, 4] }]
+      },
+      options: { scales: { r: { min: 0, max: 100, ticks: { stepSize: 25 } } } }
+    });
   }
 
-  async function comparePage(a, b) {
+  async function comparePage(...picked) {
     const r = state.result;
     if (!r) return render(noResult());
     const list = await api("/api/careers");
     const ids = list.careers.map(c => c.id);
-    a = ids.includes(a) ? a : r.all_scores[0].id;
-    b = ids.includes(b) && b !== a ? b : r.all_scores.find(x => x.id !== a).id;
-    const [ca, cb] = await Promise.all([api(`/api/careers/${a}`), api(`/api/careers/${b}`)]);
-    const sa = r.all_scores.find(x => x.id === a), sb = r.all_scores.find(x => x.id === b);
+    // up to three distinct, valid careers; default is the top three
+    let sel = [...new Set(picked.filter(id => ids.includes(id)))].slice(0, 3);
+    if (!picked.some(Boolean)) sel = r.all_scores.slice(0, 3).map(x => x.id);
+    for (const x of r.all_scores) { if (sel.length >= 2) break; if (!sel.includes(x.id)) sel.push(x.id); }
+    const cs = await Promise.all(sel.map(id => api(`/api/careers/${encodeURIComponent(id)}`)));
+    const ss = sel.map(id => r.all_scores.find(x => x.id === id));
     const you = state.meta.skills.map(s => r.analysis.inputs[s.id]);
-    const opt = sel => list.careers.map(c => `<option value="${c.id}" ${c.id === sel ? "selected" : ""}>${esc(c.name)}</option>`).join("");
-    const row = (k, fa, fb) => `<tr><td>${k}</td><td class="num">${fa}</td><td class="num">${fb}</td></tr>`;
+    const palette = [COLORS.accent, COLORS.rose, COLORS.warn];
+    const opt = (cur, allowNone) => (allowNone ? `<option value="" ${cur ? "" : "selected"}>None (compare two)</option>` : "") +
+      list.careers.map(c => `<option value="${c.id}" ${c.id === cur ? "selected" : ""}>${esc(c.name)}</option>`).join("");
+    const row = (k, vals) => `<tr><td>${k}</td>${vals.map(v => `<td class="num">${v}</td>`).join("")}</tr>`;
     const pct = v => v == null ? "—" : `${(v * 100).toFixed(0)}%`;
+    const gapOf = (c, i) => c.targets[state.meta.skills[i].id] - you[i];
+    const cols = first => `<thead><tr><th>${first}</th>${cs.map(c => `<th class="num">${esc(c.name)}</th>`).join("")}</tr></thead>`;
     render(`<div class="stack">
       <a href="#/results" class="no-print">← Back to results</a>
-      <h1>Compare two careers</h1>
+      <h1>Compare ${cs.length === 3 ? "three" : "two"} careers</h1>
       <div class="card row no-print">
-        <label class="grow">Career A <select id="ca">${opt(a)}</select></label>
-        <label class="grow">Career B <select id="cb">${opt(b)}</select></label>
+        <label class="grow">Career A <select class="csel">${opt(sel[0])}</select></label>
+        <label class="grow">Career B <select class="csel">${opt(sel[1])}</select></label>
+        <label class="grow">Career C <select class="csel">${opt(sel[2], true)}</select></label>
       </div>
       <div class="grid grid-2">
-        <div class="card"><h3>Your skills vs both targets</h3><div class="chart-box tall"><canvas id="radar"></canvas></div></div>
-        <div class="card"><h3>Score comparison</h3>
-          <table><thead><tr><th></th><th class="num">${esc(ca.name)}</th><th class="num">${esc(cb.name)}</th></tr></thead><tbody>
-            ${row("Final score", `<b>${sa.score.toFixed(1)}</b>`, `<b>${sb.score.toFixed(1)}</b>`)}
-            ${row("Fit band", bandPill(sa.fit), bandPill(sb.fit))}
-            ${row("Rank (of 18)", r.all_scores.indexOf(sa) + 1, r.all_scores.indexOf(sb) + 1)}
-            ${row("Fuzzy suitability s", sa.fis_suitability.toFixed(1), sb.fis_suitability.toFixed(1))}
-            ${row("Interest match I", pct(sa.interest_match), pct(sb.interest_match))}
-            ${row("Preference match W", pct(sa.preference_match), pct(sb.preference_match))}
+        <div class="card"><h3>Your skills vs the targets</h3><div class="chart-box tall"><canvas id="radar"></canvas></div></div>
+        <div class="card table-wrap"><h3>Score comparison</h3>
+          <table>${cols("")}<tbody>
+            ${row("Final score", ss.map(s => `<b>${s.score.toFixed(1)}</b>`))}
+            ${row("Fit band", ss.map(s => bandPill(s.fit)))}
+            ${row("Rank (of 18)", ss.map(s => r.all_scores.indexOf(s) + 1))}
+            ${row("Fuzzy suitability s", ss.map(s => s.fis_suitability.toFixed(1)))}
+            ${row("Interest match I", ss.map(s => pct(s.interest_match)))}
+            ${row("Preference match W", ss.map(s => pct(s.preference_match)))}
           </tbody></table>
           <h3 style="margin-top:16px">Gap per skill (target − you)</h3>
-          <table><thead><tr><th>Skill</th><th class="num">${esc(ca.name)}</th><th class="num">${esc(cb.name)}</th></tr></thead><tbody>
-            ${state.meta.skills.map((s, i) => {
-              const ga = ca.targets[s.id] - you[i], gb = cb.targets[s.id] - you[i];
-              const f = g => g > 0 ? `<span class="pill warn">+${g.toFixed(0)}</span>` : `<span class="pill accent">met</span>`;
-              return row(esc(s.label), f(ga), f(gb));
-            }).join("")}
+          <table>${cols("Skill")}<tbody>
+            ${state.meta.skills.map((s, i) => row(esc(s.label), cs.map(c => {
+      const g = gapOf(c, i); return g > 0 ? `<span class="pill warn">+${g.toFixed(0)}</span>` : `<span class="pill accent">met</span>`;
+    }))).join("")}
           </tbody></table>
-          <p class="small muted">Total gap: ${esc(ca.name)} ${state.meta.skills.reduce((t, s, i) => t + Math.max(0, ca.targets[s.id] - you[i]), 0).toFixed(0)} points ·
-            ${esc(cb.name)} ${state.meta.skills.reduce((t, s, i) => t + Math.max(0, cb.targets[s.id] - you[i]), 0).toFixed(0)} points.</p>
+          <p class="small muted">Total gap: ${cs.map(c => `${esc(c.name)} ${state.meta.skills.reduce((t, _, i) => t + Math.max(0, gapOf(c, i)), 0).toFixed(0)} points`).join(" · ")}.</p>
         </div>
       </div>
       <p class="notice small">Targets are model assumptions, not industry standards.</p>
     </div>`);
-    const go2 = () => go(`#/compare/${document.getElementById("ca").value}/${document.getElementById("cb").value}`);
-    document.getElementById("ca").onchange = go2;
-    document.getElementById("cb").onchange = go2;
-    chart("radar", { type: "radar", data: { labels: state.meta.skills.map(s => s.label), datasets: [
-        { label: "You", data: you, borderColor: COLORS.brand, backgroundColor: "rgba(61,78,216,.18)" },
-        { label: ca.name, data: state.meta.skills.map(s => ca.targets[s.id]), borderColor: COLORS.accent, backgroundColor: "rgba(15,157,138,.06)", borderDash: [6, 4] },
-        { label: cb.name, data: state.meta.skills.map(s => cb.targets[s.id]), borderColor: COLORS.rose, backgroundColor: "rgba(192,57,107,.06)", borderDash: [2, 3] }] },
-      options: { scales: { r: { min: 0, max: 100, ticks: { stepSize: 25 } } } } });
+    app.querySelectorAll(".csel").forEach(s => s.onchange = () =>
+      go(`#/compare/${[...app.querySelectorAll(".csel")].map(x => x.value).filter(Boolean).map(encodeURIComponent).join("/")}`));
+    chart("radar", {
+      type: "radar", data: {
+        labels: state.meta.skills.map(s => s.label), datasets: [
+          { label: "You", data: you, borderColor: COLORS.brand, backgroundColor: "rgba(61,78,216,.18)" },
+          ...cs.map((c, k) => ({
+            label: c.name, data: state.meta.skills.map(s => c.targets[s.id]), borderColor: palette[k],
+            backgroundColor: "transparent", borderDash: [[6, 4], [2, 3], [10, 3]][k]
+          }))]
+      },
+      options: { scales: { r: { min: 0, max: 100, ticks: { stepSize: 25 } } } }
+    });
+  }
+
+  // ---------- compare two people (current result + this browser's history) ----------
+  function peopleList() {
+    const cur = state.result;
+    const people = cur ? [{ id: "current", label: `Current result · ${cur.display_name || "Anonymous"}`, result: cur }] : [];
+    for (const e of readHistory()) {
+      if (cur && e.result.created_at && e.result.created_at === cur.created_at) continue;  // same assessment as "current"
+      people.push({ id: e.id, label: `${e.result.display_name || "Anonymous"} · ${fmtDate(e.at)}${e.tag ? ` (${e.tag})` : ""}`, result: e.result });
+    }
+    return people;
+  }
+
+  function peoplePage(a, b) {
+    const people = peopleList();
+    if (people.length < 2) {
+      return render(`<div class="stack">
+        <h1>Compare with another person</h1>
+        <div class="error-box"><b>No other data available to compare.</b>
+          ${people.length === 0 ? "There is no current result and no saved history in this browser yet."
+          : "Only one assessment is available, so there is nobody else to compare it with."}
+          Take another assessment or load the demo history, then try again.</div>
+        <div class="row"><a class="btn" href="#/instructions">Start Career Assessment</a>
+          <a class="btn secondary" href="#/history">Open History (load demo profiles)</a></div></div>`);
+    }
+    const find = id => people.find(p => p.id === id);
+    const A = find(a) || people[0];
+    const B = (b !== A.id && find(b)) || people.find(p => p !== A);
+    const ra = A.result, rb = B.result, skills = state.meta.skills;
+    const rawA = ra.display_name || "Person A", rawB = rb.display_name || "Person B";
+    const na = esc(rawA), nb = esc(rawB);
+    const opt = cur => people.map(p => `<option value="${esc(p.id)}" ${p.id === cur ? "selected" : ""}>${esc(p.label)}</option>`).join("");
+    const topIds = r => r.recommendations.map(x => x.id);
+    const shared = topIds(ra).filter(id => topIds(rb).includes(id)).map(id => ra.recommendations.find(x => x.id === id).name);
+    const interests = r => (r.interests || r.input?.interests || []).map(i => esc(interestLabel(i))).join(", ") || "—";
+    const topList = r => `<ol>${r.recommendations.map(x => `<li>${esc(x.name)} <b>${x.score.toFixed(1)}</b> ${bandPill(x.fit)}</li>`).join("")}</ol>`;
+    const person = (n, r) => `<div class="card"><h3>${n}</h3>${topList(r)}
+      <p class="small"><b>Interests:</b> ${interests(r)}<br><b>Work preferences:</b> ${prefText(r.work_preferences) || "not given"}</p></div>`;
+    const scoreB = Object.fromEntries(rb.all_scores.map(x => [x.id, x.score]));
+    render(`<div class="stack">
+      <a href="#/history" class="no-print">← Back to history</a>
+      <h1>Compare with another person</h1>
+      <p class="muted">Both people are scored by the same engine, so the numbers are directly comparable. Data comes from this browser's history only.</p>
+      <div class="card row no-print">
+        <label class="grow">Person A <select id="pa">${opt(A.id)}</select></label>
+        <label class="grow">Person B <select id="pb">${opt(B.id)}</select></label>
+      </div>
+      <p class="notice info">${shared.length ? `<b>Shared top-5 careers:</b> ${shared.map(esc).join(", ")}.` : "These two people have no careers in common in their top 5."}
+        Top match: ${na} → <b>${esc(ra.recommendations[0].name)}</b>, ${nb} → <b>${esc(rb.recommendations[0].name)}</b>.</p>
+      <div class="grid grid-2">${person(na, ra)}${person(nb, rb)}</div>
+      <div class="grid grid-2">
+        <div class="card"><h3>Skill profiles</h3><div class="chart-box tall"><canvas id="pradar"></canvas></div></div>
+        <div class="card table-wrap"><h3>Skill ratings</h3>
+          <table><thead><tr><th>Skill</th><th class="num">${na}</th><th class="num">${nb}</th><th class="num">Difference</th></tr></thead><tbody>
+          ${skills.map(s => {
+      const x = ra.analysis.inputs[s.id], y = rb.analysis.inputs[s.id], d = x - y;
+      return `<tr><td>${esc(s.label)}</td><td class="num">${x}</td><td class="num">${y}</td><td class="num">${d === 0 ? "=" : `${d > 0 ? "A" : "B"} +${Math.abs(d)}`}</td></tr>`;
+    }).join("")}</tbody></table></div>
+      </div>
+      <div class="card"><h3>Score for every career</h3><div class="chart-box tall"><canvas id="pall"></canvas></div></div>
+      <p class="notice small">For exploration only. A higher score means a closer match to the model's assumptions, not a better person or a guaranteed outcome.</p>
+    </div>`);
+    const pick = () => go(`#/people/${encodeURIComponent(document.getElementById("pa").value)}/${encodeURIComponent(document.getElementById("pb").value)}`);
+    document.getElementById("pa").onchange = pick;
+    document.getElementById("pb").onchange = pick;
+    chart("pradar", {
+      type: "radar", data: {
+        labels: skills.map(s => s.label), datasets: [
+          { label: rawA, data: skills.map(s => ra.analysis.inputs[s.id]), borderColor: COLORS.brand, backgroundColor: "rgba(61,78,216,.15)" },
+          { label: rawB, data: skills.map(s => rb.analysis.inputs[s.id]), borderColor: COLORS.rose, backgroundColor: "rgba(192,57,107,.10)", borderDash: [5, 4] }]
+      },
+      options: { scales: { r: { min: 0, max: 100, ticks: { stepSize: 25 } } } }
+    });
+    chart("pall", {
+      type: "bar", data: {
+        labels: ra.all_scores.map(x => x.name), datasets: [
+          { label: rawA, data: ra.all_scores.map(x => x.score), backgroundColor: COLORS.brand },
+          { label: rawB, data: ra.all_scores.map(x => scoreB[x.id] ?? null), backgroundColor: COLORS.rose }]
+      },
+      options: { indexAxis: "y", scales: { x: { min: 0, max: 100 }, y: { ticks: { font: { size: 10 } } } } }
+    });
   }
 
   function reportPage() {
@@ -545,22 +656,26 @@
         so another computer starts with an empty history.</p>
       <div class="row no-print">
         <button class="btn secondary" id="demo">Load demo history (5 profiles)</button>
+        <a class="btn secondary" href="#/people">Compare two people</a>
         <button class="btn secondary" id="export" ${list.length ? "" : "disabled"}>Export JSON</button>
         <span class="spacer"></span>
         <button class="btn ghost danger" id="clear" ${list.length ? "" : "disabled"}>Clear all</button>
       </div>
       <div id="hmsg"></div>
       ${list.length ? `<div class="card table-wrap"><table class="history"><thead><tr><th>When</th><th>Name</th><th>Top career</th><th class="num">Score</th><th>Fit</th><th>Next two</th><th></th></tr></thead><tbody>
-        ${list.map(e => { const t = e.result.recommendations; return `<tr>
+        ${list.map(e => {
+      const t = e.result.recommendations; return `<tr>
           <td>${esc(fmtDate(e.at))}${e.tag ? ` <span class="pill">${esc(e.tag)}</span>` : ""}</td>
           <td>${esc(e.result.display_name || "Anonymous")}</td>
           <td><b>${esc(t[0].name)}</b></td><td class="num">${t[0].score.toFixed(1)}</td><td>${bandPill(t[0].fit)}</td>
           <td class="small">${t.slice(1, 3).map(x => `${esc(x.name)} (${x.score.toFixed(0)})`).join(", ")}</td>
           <td class="row" style="flex-wrap:nowrap"><button class="btn secondary" data-view="${e.id}">View</button>
-            <button class="btn ghost" data-del="${e.id}" aria-label="Delete">Delete</button></td></tr>`; }).join("")}
+            <a class="btn secondary" href="#/people/${state.result ? "current" : ""}/${encodeURIComponent(e.id)}">Compare</a>
+            <button class="btn ghost" data-del="${e.id}" aria-label="Delete">Delete</button></td></tr>`;
+    }).join("")}
       </tbody></table></div>
       <div class="card"><h3>Top career across saved results</h3><div class="chart-box"><canvas id="hchart"></canvas></div></div>`
-      : `<div class="card"><p>No saved results yet. Take the assessment, or load the demo history to see how this page works.</p>
+        : `<div class="card"><p>No saved results yet. Take the assessment, or load the demo history to see how this page works.</p>
           <a class="btn" href="#/instructions">Start Career Assessment</a></div>`}
     </div>`);
     document.getElementById("demo").onclick = loadDemoHistory;
@@ -579,8 +694,10 @@
       const counts = {};
       list.forEach(e => { const n = e.result.recommendations[0].name; counts[n] = (counts[n] || 0) + 1; });
       const names = Object.keys(counts).sort((x, y) => counts[y] - counts[x]);
-      chart("hchart", { type: "bar", data: { labels: names, datasets: [{ label: "Times ranked #1", data: names.map(n => counts[n]), backgroundColor: COLORS.brand }] },
-        options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { ticks: { stepSize: 1 }, title: { display: true, text: "Saved results" } } } } });
+      chart("hchart", {
+        type: "bar", data: { labels: names, datasets: [{ label: "Times ranked #1", data: names.map(n => counts[n]), backgroundColor: COLORS.brand }] },
+        options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { ticks: { stepSize: 1 }, title: { display: true, text: "Saved results" } } } }
+      });
     }
   }
 
@@ -614,11 +731,10 @@
         An optional LLM (Groq) only rewrites the computed results as a readable paragraph; it never scores anything.</p>
       <h3>Team members and responsibilities</h3>
       <table><tbody>
-        <tr><td>Member 1</td><td>Fuzzy Logic module, rules, membership graphs</td></tr>
-        <tr><td>Member 2</td><td>Genetic Algorithm, fitness function, experiment</td></tr>
-        <tr><td>Member 3</td><td>Career dataset, reference profiles, ranking and skill gaps</td></tr>
-        <tr><td>Member 4</td><td>Frontend and integration</td></tr></tbody></table>
-      <p class="muted small">Replace these with your team's names before submission.</p>
+        <tr><td>Chandraprakash Verma</td><td>Fuzzy Logic module, rules, membership graphs</td></tr>
+        <tr><td>Smit Joshi</td><td>Genetic Algorithm, fitness function, experiment</td></tr>
+        <tr><td>Shrey Patel</td><td>Career dataset, reference profiles, ranking and skill gaps</td></tr>
+        <tr><td>Krunal Patil</td><td>Frontend and integration</td></tr></tbody></table>
       <h3>Limitations</h3>
       <ul><li>Skill ratings are self-reported and subjective.</li><li>Career target and work profiles are simplified model assumptions, not industry standards.</li>
         <li>The GA was trained and evaluated on 500 synthetic profiles labelled by our own expert function. The evaluation shows consistency with those assumptions, not real-world accuracy.</li>
@@ -644,7 +760,7 @@
   // ---------- router ----------
   function go(h) { location.hash = h; }
   async function route() {
-    const [, page = "", arg, arg2] = (location.hash || "#/").split("/");
+    const [, page = "", arg, arg2, arg3] = (location.hash || "#/").split("/");
     document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("active", a.getAttribute("href") === `#/${page}`));
     document.getElementById("nav").classList.remove("open");
     try {
@@ -657,7 +773,8 @@
         case "results": return results();
         case "career": return careerPage(decodeURIComponent(arg || ""));
         case "gap": return gapPage(decodeURIComponent(arg || ""));
-        case "compare": return comparePage(decodeURIComponent(arg || ""), decodeURIComponent(arg2 || ""));
+        case "compare": return comparePage(...[arg, arg2, arg3].map(x => decodeURIComponent(x || "")));
+        case "people": return peoplePage(decodeURIComponent(arg || ""), decodeURIComponent(arg2 || ""));
         case "report": return reportPage();
         case "history": return historyPage();
         case "analysis": return window.CCPages.analysis(arg);

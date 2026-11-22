@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Compare careers now takes up to three careers (defaults to your top 3); Career C can be set to "None" for a two-way comparison.
+- New "Compare with another person" page (`#/people`): any two of the current result and this browser's saved history, side by side (top 5, shared careers, skill radar, ratings table, all 18 scores). Shows "No other data available to compare" when there is no one else saved.
+- LLM summary: Groq retired `llama-3.3-70b-versatile`; the default is now `openai/gpt-oss-120b` with low reasoning effort, and HTTP errors are logged with their status.
+
 ## 2.0.0 — 2026-11-21
 
 ### Scoring realism

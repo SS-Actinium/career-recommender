@@ -16,7 +16,7 @@ from typing import Any
 log = logging.getLogger("career.summary")
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-DEFAULT_MODEL = "llama-3.3-70b-versatile"
+DEFAULT_MODEL = "openai/gpt-oss-120b"  # llama-3.3-70b-versatile was retired by Groq
 TIMEOUT_S = 8.0
 MAX_CHARS = 1400
 
@@ -44,9 +44,12 @@ def _facts(result: dict[str, Any]) -> dict[str, Any]:
 
 def _call_groq(facts: dict[str, Any]) -> tuple[str, str]:
     model = os.environ.get("GROQ_MODEL", DEFAULT_MODEL)
-    body = json.dumps({"model": model, "temperature": 0.4, "max_tokens": 300,
-                       "messages": [{"role": "system", "content": SYSTEM_PROMPT},
-                                    {"role": "user", "content": json.dumps(facts)}]}).encode()
+    payload: dict[str, Any] = {"model": model, "temperature": 0.4, "max_tokens": 600,
+                               "messages": [{"role": "system", "content": SYSTEM_PROMPT},
+                                    {"role": "user", "content": json.dumps(facts)}]}
+    if model.startswith("openai/gpt-oss"):  # reasoning model: keep thinking short so the answer fits
+        payload["reasoning_effort"] = "low"
+    body = json.dumps(payload).encode()
     req = urllib.request.Request(GROQ_URL, data=body, method="POST", headers={
         "Authorization": f"Bearer {os.environ['GROQ_API_KEY']}", "Content-Type": "application/json",
         "User-Agent": "career-recommender/2.0"})
@@ -66,6 +69,9 @@ def summarise(result: dict[str, Any]) -> dict[str, Any]:
     try:
         text, model = _call_groq(_facts(result))
         return {"text": text, "source": "groq", "model": model}
+    except urllib.error.HTTPError as exc:
+        log.warning("Groq summary failed (HTTP %s), using template: %s", exc.code, exc.read().decode("utf-8", "replace")[:300])
+        return {**template, "reason": "The LLM service returned an error, so the built-in template summary is shown."}
     except (urllib.error.URLError, TimeoutError, KeyError, IndexError, ValueError, OSError) as exc:
         log.warning("Groq summary failed, using template: %s", type(exc).__name__)
         return {**template, "reason": "The LLM service could not be reached, so the built-in template summary is shown."}

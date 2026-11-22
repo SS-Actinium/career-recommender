@@ -94,7 +94,7 @@ The rule evaluation is vectorised (antecedent index arrays; shorter rules repeat
 
 ### 5. Optional LLM summary
 
-`engine/summary.py` can ask Groq (`llama-3.3-70b-versatile` by default, set by `GROQ_MODEL`) to rewrite the computed top 5 as a 90–140 word paragraph.
+`engine/summary.py` can ask Groq (`openai/gpt-oss-120b` by default, set by `GROQ_MODEL`) to rewrite the computed top 5 as a 90–140 word paragraph.
 
 - The LLM **never scores**. The `/api/summary` endpoint re-validates the input and recomputes the result on the server, so client-sent scores are never trusted, and only computed facts are sent.
 - The **display name is never sent**.

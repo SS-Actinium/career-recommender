@@ -1,6 +1,7 @@
 # CareerCompass: AI-Based Career Recommendation System (Soft Computing)
 
-An MCA Soft Computing project prototype. A student rates six skills (0–100, self-reported), ranks their interests, and can optionally give work preferences. The backend then runs:
+An MCA Soft Computing project. 
+A student rates six skills (0–100, self-reported), ranks their interests, and can optionally give work preferences. The backend then runs:
 
 1. A **Mamdani Fuzzy Inference System**: one FIS per career, 18 careers, 11 rules each (198 rules), with 3 input sets forming a Ruspini partition, 5 output sets and centroid defuzzification.
 2. Input weights tuned **offline** by a custom **Genetic Algorithm** (NumPy), selected on a validation split.
